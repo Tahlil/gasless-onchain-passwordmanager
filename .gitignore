@@ -116,3 +116,7 @@ dist
 .pnp.*
 
 key.txt
+
+artifacts
+cache
+typechain
