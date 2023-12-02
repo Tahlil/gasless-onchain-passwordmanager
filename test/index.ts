@@ -77,7 +77,7 @@ describe('password manager', () => {
     expect(pass === encryptedPassword);
   });
 
-  it.only("Check store password functionality", async function () {
+  it("Check store password functionality", async function () {
     const { passContract, otherAccounts, platform, userAddress, user } = await loadFixture(deployOnceFixture);
     
     const { messageHashBytes, v, r, s } = await signMessage(user);
