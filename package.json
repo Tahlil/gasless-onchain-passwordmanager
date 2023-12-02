@@ -26,6 +26,8 @@
   "dependencies": {
     "@nomiclabs/hardhat-solhint": "^2.0.1",
     "@openzeppelin/contracts": "^4.7.2",
+    "aes256": "^1.1.0",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.0.1",
     "edit-json-file": "^1.7.0",
     "generate-password": "^1.7.1",
