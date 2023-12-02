@@ -22,20 +22,22 @@ contract Pass {
         owner = msg.sender;
     }
 
-    function isWhitelist(address userAddreses) external view returns(bool) {
+    function isWhitelist(address userAddreses) external view returns (bool) {
         return whitelisted[userAddreses];
     }
 
-     function isWhitelistPlatform(string calldata platform) external view returns(bool) {
+    function isWhitelistPlatform(
+        string calldata platform
+    ) external view returns (bool) {
         return whitelistedPlatforms[platform];
     }
 
-    function registerFunction(address addressToCheck) external {
+    function registerFunction(address addressToCheck) external onlyOwner {
         require(!whitelisted[addressToCheck], "Already reged");
         whitelisted[addressToCheck] = true;
     }
 
-    function registerPlatform(string calldata platform) external {
+    function registerPlatform(string calldata platform) external onlyOwner {
         require(!whitelistedPlatforms[platform], "Already reged");
         whitelistedPlatforms[platform] = true;
     }
@@ -77,7 +79,7 @@ contract Pass {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external onlyOwner(){
+    ) external onlyOwner {
         require(whitelisted[userAddress], "not listed");
         require(userAddress != backupAddress, "can not be same");
         bytes32 prefixedHashMessage = keccak256(
