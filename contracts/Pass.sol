@@ -29,4 +29,11 @@ contract Pass {
         whitelistedPlatforms[platform] = true;
     }
 
+    function storePassword(string calldata platformName, string calldata encryptedPass) external {
+        require(whitelisted[msg.sender], "user not listed");
+        require(whitelistedPlatforms[platformName], "platform not listed");
+        bytes memory concatenatedData = abi.encodePacked(msg.sender, platformName);
+        paltformPasswords[keccak256(concatenatedData)] = encryptedPass;
+    }
+
 }
