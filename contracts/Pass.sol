@@ -59,10 +59,21 @@ contract Pass {
 
     function freezeAccount(
         address userAddress,
-        address backupAddress
+        address backupAddress,
+        bytes32 _hashedMessage,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
     ) external {
         require(whitelisted[userAddress], "not listed");
         require(userAddress != backupAddress, "can not be same");
+         bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+
+        require(!usedSignatures[_hashedMessage], "already used");
+        usedSignatures[_hashedMessage] = true;
+
+        require(userAddress == ecrecover(prefixedHashMessage, _v, _r, _s), "Invalid signature");
+        
         freeze[userAddress] = backupAddress;
     }
 }
