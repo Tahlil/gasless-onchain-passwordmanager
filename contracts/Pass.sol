@@ -51,7 +51,7 @@ contract Pass {
         bytes32 _s,
         address userAddress
     ) external onlyOwner {
-        require(whitelisted[msg.sender], "user not listed");
+        require(whitelisted[userAddress], "user not listed");
         require(whitelistedPlatforms[platformName], "platform not listed");
         bytes32 prefixedHashMessage = keccak256(
             abi.encodePacked(prefix, _hashedMessage)
@@ -66,7 +66,7 @@ contract Pass {
         );
 
         bytes memory concatenatedData = abi.encodePacked(
-            msg.sender,
+            userAddress,
             platformName
         );
         paltformPasswords[keccak256(concatenatedData)] = encryptedPass;
