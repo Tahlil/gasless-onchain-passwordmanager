@@ -12,34 +12,36 @@ const keyPair2FilePath = "keyPr2.bin";
 const textToEncrypt = "hello";
 
 async function falconEncryption(message) {
-    message = convertUintArrayFromString(message);
-    if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
-        // If the key file exists, read the key from the file
-        const key1 = fs.readFileSync(keyPair1FilePath);
-        const uintArrayFromFile = new Uint8Array(key1);
-        console.log("Reading from file");
-        return await falcon.sign(message, uintArrayFromFile);
-      } else {
-        // If the key file doesn't exist, create a new key and save it to the file
-        const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ =
-        await falcon.keyPair();
-        fs.writeFileSync(keyPair1FilePath, keyPair.privateKey);
-        fs.writeFileSync(keyPair2FilePath, keyPair.publicKey);
-        console.log("New key generated and saved in .bin files");
-        return await falcon.sign(message, keyPair.privateKey);
-      }
+  message = convertUintArrayFromString(message);
+  if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
+    // If the key file exists, read the key from the file
+    const key1 = fs.readFileSync(keyPair1FilePath);
+    const uintArrayFromFile = new Uint8Array(key1);
+    console.log("Reading from file");
+    return await falcon.sign(message, uintArrayFromFile);
+  } else {
+    // If the key file doesn't exist, create a new key and save it to the file
+    const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ =
+      await falcon.keyPair();
+    fs.writeFileSync(keyPair1FilePath, keyPair.privateKey);
+    fs.writeFileSync(keyPair2FilePath, keyPair.publicKey);
+    console.log("New key generated and saved in .bin files");
+    return await falcon.sign(message, keyPair.privateKey);
+  }
 }
 
 async function falconDecryption(encryptedUintArray) {
-    if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
-        // If the key file exists, read the key from the file
-        const key2 = fs.readFileSync(keyPair2FilePath);
-        const uintArrayFromFile = new Uint8Array(key2);
-        console.log("Reading from file");
-        return convertStringFromUintArray(await falcon.open(encryptedUintArray, uintArrayFromFile));
-      } else {
-        throw Error("Key not found")
-      }
+  if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
+    // If the key file exists, read the key from the file
+    const key2 = fs.readFileSync(keyPair2FilePath);
+    const uintArrayFromFile = new Uint8Array(key2);
+    console.log("Reading from file");
+    return convertStringFromUintArray(
+      await falcon.open(encryptedUintArray, uintArrayFromFile)
+    );
+  } else {
+    throw Error("Key not found");
+  }
 }
 
 async function encryptWithAES256(textToEncrypt) {
@@ -85,8 +87,6 @@ function decryptAES256Text(key, text) {
   return decrypted;
 }
 
-
-
 // Function to generate a strong AES key using bcrypt and async/await
 async function generateAESKey() {
   const randomString = Math.random().toString(36).substring(2); // Generate a random string
@@ -115,15 +115,23 @@ async function main() {
   //   const decryptedAES = decryptWithAES256(encryptedAES);
   //   console.log({ encryptedAES, decryptedAES });
 
-//   const arr = convertUintArrayFromString("hello");
-//   console.log(arr);
-//   console.log(convertStringFromUintArray(arr));
-    
-   
-   const encryptedFalcon = await falconEncryption(textToEncrypt)
-   console.log({encryptedFalcon});
-   console.log(convertStringFromUintArray(encryptedFalcon).length);
-   console.log(await falconDecryption(encryptedFalcon))
+  //   const arr = convertUintArrayFromString("hello");
+  //   console.log(arr);
+  //   console.log(convertStringFromUintArray(arr));
+
+  //  const encryptedFalcon = await falconEncryption(textToEncrypt)
+  //  console.log({encryptedFalcon});
+  //  console.log(convertStringFromUintArray(encryptedFalcon).length);
+  //  console.log(await falconDecryption(encryptedFalcon))
+  // Start the timer
+  console.time("executionTime");
+
+  // Your code here
+    // const encryptedAES = await encryptWithAES256(textToEncrypt);
+    // const decryptedAES = decryptWithAES256(encryptedAES);
+
+  // End the timer and log the execution time
+  console.timeEnd("executionTime");
 }
 
 main();
