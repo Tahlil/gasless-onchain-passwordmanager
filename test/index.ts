@@ -6,6 +6,25 @@ import { Pass__factory, Pass } from '../frontend/typechain'
 
 describe('password manager', () => {
 
+  async function signMessage(signer: { signMessage: (arg0: Uint8Array) => any; }) {
+    let randomString = ethers.utils.id("123321asddsa");
+
+    let messageHashBytes = ethers.utils.arrayify(randomString);
+
+    // Sign the binary data
+    let flatSig = await signer.signMessage(messageHashBytes);
+
+    // For Solidity, we need the expanded-format of a signature
+    let sig = ethers.utils.splitSignature(flatSig);
+
+    // split signature
+    const v = sig.v;
+    const r = sig.r;
+    const s = sig.s;
+
+    return { messageHashBytes, v, r, s };
+  }
+
   async function deployOnceFixture() {
     const [owner, ...otherAccounts] = await ethers.getSigners();
     const userAddress = otherAccounts[2].address;
@@ -22,6 +41,18 @@ describe('password manager', () => {
     await tx.wait();
 
     expect(!(await passContract.isWhitelist(userAddress)));
+  });
+
+  it.only("Check platform listing functionality", async function () {
+    const { passContract } = await loadFixture(deployOnceFixture);
+    
+    const platform = "google";
+    expect(!(await passContract.isWhitelistPlatform(platform)));
+
+    let tx = await passContract.registerPlatform(platform);
+    await tx.wait();
+
+    expect(!(await passContract.isWhitelistPlatform(platform)));
   });
 
   it.only("Check platform listing functionality", async function () {
