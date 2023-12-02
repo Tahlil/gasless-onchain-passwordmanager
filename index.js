@@ -7,18 +7,35 @@ const bcrypt = require("bcrypt");
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const keyFilePath = "key.txt";
-const textToEncrypt = "Hello, this is a secret message!";
+const keyPair1FilePath = "keyPr1.bin";
+const keyPair2FilePath = "keyPr2.bin";
+const textToEncrypt = "hello";
 
-async function falconEncryption(msg) {
-  const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ =
-    await falcon.keyPair();
-  const message /*: Uint8Array */ = new Uint8Array([
-    104, 101, 108, 108, 111, 0,
-  ]); // "hello"
-  const signed = await falcon.sign(message, keyPair.privateKey);
-  const verified = await falcon.open(signed, keyPair.publicKey); 
-  
-  console.log({message, signed, verified});
+async function falconEncryption(message) {
+    message = convertUintArrayFromString(message);
+    if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
+        // If the key file exists, read the key from the file
+        const key1 = fs.readFileSync(keyPair1FilePath);
+        const uintArrayFromFile = new Uint8Array(key1);
+        console.log("Reading from file");
+        return await falcon.sign(message, uintArrayFromFile);
+      } else {
+        // If the key file doesn't exist, create a new key and save it to the file
+        const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ =
+        await falcon.keyPair();
+        fs.writeFileSync(keyPair1FilePath, keyPair.privateKey);
+        fs.writeFileSync(keyPair2FilePath, keyPair.publicKey);
+        console.log("New key generated and saved in .bin files");
+        return await falcon.sign(message, keyPair.privateKey);
+      }
+ 
+    // const message /*: Uint8Array */ = new Uint8Array([
+    //     104, 101, 108, 108, 111, 0,
+    // ]); // "hello"
+    // const signed = await falcon.sign(message, keyPair.privateKey);
+    // const verified = await falcon.open(signed, keyPair.publicKey);
+
+    // console.log({ message, signed, verified });
 }
 
 async function encryptWithAES256(textToEncrypt) {
@@ -86,24 +103,27 @@ async function generateAESKey() {
 }
 
 function convertStringFromUintArray(uintArray) {
-    return decoder.decode(uintArray);
+  return decoder.decode(uintArray);
 }
 
 function convertUintArrayFromString(str) {
-    
-    return encoder.encode(str);
-    // return Buffer.from(str, 'utf-8');
+  return encoder.encode(str);
+  // return Buffer.from(str, 'utf-8');
 }
 
 async function main() {
   // AES 256 encryption and decryption
-//   const encryptedAES = await encryptWithAES256(textToEncrypt);
-//   const decryptedAES = decryptWithAES256(encryptedAES);
-//   console.log({ encryptedAES, decryptedAES });
-    const arr = convertUintArrayFromString("hello");
-    console.log(arr);
-    console.log(convertStringFromUintArray(arr));
-//    falconEncryption("")
+  //   const encryptedAES = await encryptWithAES256(textToEncrypt);
+  //   const decryptedAES = decryptWithAES256(encryptedAES);
+  //   console.log({ encryptedAES, decryptedAES });
+
+//   const arr = convertUintArrayFromString("hello");
+//   console.log(arr);
+//   console.log(convertStringFromUintArray(arr));
+    
+   
+   const encryptedFalcon = await falconEncryption(textToEncrypt)
+   console.log({encryptedFalcon});
 }
 
 main();
