@@ -13,7 +13,7 @@ function generatePassword(len) {
 
 const data= {}
 
-for (let i = 10; i < 110; i+=15) {
+for (let i = 100; i > 10; i-=15) {
     data[i] = generatePassword(i);
 }
 

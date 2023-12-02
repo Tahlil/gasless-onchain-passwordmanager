@@ -159,7 +159,7 @@ async function main() {
     let encryptedAES
     let startTime = performance.now();
     for (let i = 0; i < 10000; i++) {
-      encryptedAES = await encryptWithAES256(dt[0]);
+      encryptedAES = await encryptWithAES256(dt[5]);
       decryptWithAES256(encryptedAES);
     }
     console.log(encryptedAES.length);
