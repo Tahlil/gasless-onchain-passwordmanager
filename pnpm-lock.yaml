@@ -23,6 +23,9 @@ dependencies:
   edit-json-file:
     specifier: ^1.7.0
     version: 1.7.0
+  falcon-crypto:
+    specifier: ^1.0.6
+    version: 1.0.6
   generate-password:
     specifier: ^1.7.1
     version: 1.7.1
@@ -3219,6 +3222,10 @@ packages:
     resolution: {integrity: sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==}
     engines: {'0': node >=0.6.0}
     dev: true
+
+  /falcon-crypto@1.0.6:
+    resolution: {integrity: sha512-viAJlA73IsQ+sis/2ucRzjAWRriZ361Mz9mjfyKHujm7cJBofzP2ns5tSuP04y0foef98WnLOfPp0MGr8/iIlg==}
+    dev: false
 
   /fast-base64-decode@1.0.0:
     resolution: {integrity: sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==}

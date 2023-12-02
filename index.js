@@ -1,6 +1,7 @@
 let generator = require("generate-password");
 const aes256 = require("aes256");
 const fs = require("fs");
+const falcon = require("falcon-crypto'");
 
 const keyFilePath = "key.txt";
 const textToEncrypt = "Hello, this is a secret message!";
@@ -15,7 +16,7 @@ async function encryptWithAES256(textToEncrypt) {
     console.log("Key read from key.txt");
 
     // Use the existing key to encrypt text
-    encryptText(key, textToEncrypt);
+    encryptAES256Text(key, textToEncrypt);
   } else {
     // If the key file doesn't exist, create a new key and save it to the file
     const key = await generateAESKey();
@@ -23,12 +24,12 @@ async function encryptWithAES256(textToEncrypt) {
     console.log("New key generated and saved in key.txt");
 
     // Use the generated key to encrypt text
-    encryptText(key, textToEncrypt);
+    encryptAES256Text(key, textToEncrypt);
   }
 }
 
 // Function to encrypt text using the AES key
-function encryptText(key, text) {
+function encryptAES256Text(key, text) {
   const encrypted = aes256.encrypt(key, text);
   console.log("Encrypted text:", encrypted);
 }
