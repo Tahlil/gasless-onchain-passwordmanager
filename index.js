@@ -28,14 +28,18 @@ async function falconEncryption(message) {
         console.log("New key generated and saved in .bin files");
         return await falcon.sign(message, keyPair.privateKey);
       }
- 
-    // const message /*: Uint8Array */ = new Uint8Array([
-    //     104, 101, 108, 108, 111, 0,
-    // ]); // "hello"
-    // const signed = await falcon.sign(message, keyPair.privateKey);
-    // const verified = await falcon.open(signed, keyPair.publicKey);
+}
 
-    // console.log({ message, signed, verified });
+async function falconDecryption(encryptedUintArray) {
+    if (fs.existsSync(keyPair1FilePath) && fs.existsSync(keyPair2FilePath)) {
+        // If the key file exists, read the key from the file
+        const key2 = fs.readFileSync(keyPair2FilePath);
+        const uintArrayFromFile = new Uint8Array(key2);
+        console.log("Reading from file");
+        return convertStringFromUintArray(await falcon.open(encryptedUintArray, uintArrayFromFile));
+      } else {
+        throw Error("Key not found")
+      }
 }
 
 async function encryptWithAES256(textToEncrypt) {
@@ -44,7 +48,6 @@ async function encryptWithAES256(textToEncrypt) {
     // If the key file exists, read the key from the file
     const key = fs.readFileSync(keyFilePath, "utf-8");
     console.log("Key read from key.txt");
-
     // Use the existing key to encrypt text
     return encryptAES256Text(key, textToEncrypt);
   } else {
@@ -124,6 +127,8 @@ async function main() {
    
    const encryptedFalcon = await falconEncryption(textToEncrypt)
    console.log({encryptedFalcon});
+   console.log(convertStringFromUintArray(encryptedFalcon).length);
+   console.log(await falconDecryption(encryptedFalcon))
 }
 
 main();
