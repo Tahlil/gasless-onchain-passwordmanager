@@ -7,9 +7,12 @@ const bcrypt = require("bcrypt");
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const keyFilePath = "key.txt";
+const passFile = "pass.json"
+
 const keyPair1FilePath = "keyPr1.bin";
 const keyPair2FilePath = "keyPr2.bin";
 const textToEncrypt = "hello";
+
 
 async function falconEncryption(message) {
   message = convertUintArrayFromString(message);
@@ -17,7 +20,6 @@ async function falconEncryption(message) {
     // If the key file exists, read the key from the file
     const key1 = fs.readFileSync(keyPair1FilePath);
     const uintArrayFromFile = new Uint8Array(key1);
-    console.log("Reading from file");
     return await falcon.sign(message, uintArrayFromFile);
   } else {
     // If the key file doesn't exist, create a new key and save it to the file
@@ -49,7 +51,6 @@ async function encryptWithAES256(textToEncrypt) {
   if (fs.existsSync(keyFilePath)) {
     // If the key file exists, read the key from the file
     const key = fs.readFileSync(keyFilePath, "utf-8");
-    console.log("Key read from key.txt");
     // Use the existing key to encrypt text
     return encryptAES256Text(key, textToEncrypt);
   } else {
@@ -67,8 +68,6 @@ function decryptWithAES256(textToDecrypt) {
   if (fs.existsSync(keyFilePath)) {
     // If the key file exists, read the key from the file
     const key = fs.readFileSync(keyFilePath, "utf-8");
-    console.log("Key read from key.txt");
-
     // Use the existing key to encrypt text
     return decryptAES256Text(key, textToDecrypt);
   } else {
@@ -124,14 +123,33 @@ async function main() {
   //  console.log(convertStringFromUintArray(encryptedFalcon).length);
   //  console.log(await falconDecryption(encryptedFalcon))
   // Start the timer
-  console.time("executionTime");
+  
 
+  try {
+    const jsonData = fs.readFileSync(passFile, 'utf-8');
+  
+    // Parse the JSON data into a JavaScript object
+    const data = JSON.parse(jsonData);
+  
+    // Loop through the object properties
+    for (let key in data) {
+      console.time("executionTime");
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+          const encryptedAES = await encryptWithAES256(data[key]);
+          decryptWithAES256(encryptedAES);
+      }
+      console.timeEnd("executionTime");
+    }
+  } catch (err) {
+      console.error('Error reading JSON file:', err);
+  }
   // Your code here
     // const encryptedAES = await encryptWithAES256(textToEncrypt);
     // const decryptedAES = decryptWithAES256(encryptedAES);
 
   // End the timer and log the execution time
-  console.timeEnd("executionTime");
+ 
 }
 
 main();
+
