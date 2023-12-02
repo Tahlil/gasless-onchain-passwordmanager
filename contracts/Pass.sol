@@ -10,7 +10,12 @@ contract Pass {
     mapping (string => bool) whitelistedPlatforms;
     address owner;
 
-    constructor () public {
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    constructor() {
         owner  = msg.sender;
     }
 
