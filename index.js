@@ -1,9 +1,9 @@
 let generator = require("generate-password");
 const aes256 = require("aes256");
 const fs = require("fs");
-// const falcon = require("falcon-crypto'");
+const falcon = require("falcon-crypto");
+
 const bcrypt = require('bcrypt');
-const { mainModule } = require("process");
 
 const keyFilePath = "key.txt";
 const textToEncrypt = "Hello, this is a secret message!";
@@ -87,6 +87,3 @@ async function main() {
 
 
 main()
-// const decryptedAES = decryptWithAES256(encryptedAES);
-// console.log({encryptedAES, decryptedAES});
-// console.log(aes256);
