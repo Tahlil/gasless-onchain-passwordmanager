@@ -57,7 +57,7 @@ describe('password manager', () => {
     expect(!(await passContract.isWhitelistPlatform(platform)));
   });
 
-  it.only("Check store password functionality", async function () {
+  it("Check store password functionality", async function () {
     const { passContract, owner, platform, userAddress, user } = await loadFixture(deployOnceFixture);
     
     const { messageHashBytes, v, r, s } = await signMessage(user);
@@ -77,11 +77,27 @@ describe('password manager', () => {
     expect(pass === encryptedPassword);
   });
 
-	// it("Should return the new greeting once it's changed", async () => {
-    // const { greeter } = await loadFixture(deployOnceFixture);
-	// 	let tx = await greeter.setGreeting('Hola, mundo!');
-    // await tx.wait();
-	// 	expect(await greeter.greet()).to.equal('Hola, mundo!');
-	// });
+  it.only("Check store password functionality", async function () {
+    const { passContract, otherAccounts, platform, userAddress, user } = await loadFixture(deployOnceFixture);
+    
+    const { messageHashBytes, v, r, s } = await signMessage(user);
+
+    expect(!(await passContract.isWhitelist(userAddress)));
+
+    let tx = await passContract.registerFunction(userAddress);
+    await tx.wait();
+
+    expect((await passContract.isWhitelist(userAddress)));
+
+    tx = await passContract.registerPlatform(platform);
+    await tx.wait();
+
+    tx = await passContract.freezeAccount(userAddress, otherAccounts[3].address, messageHashBytes,
+      v, r, s);
+    await tx.wait();
+
+    expect(!(await passContract.isWhitelist(userAddress)));
+
+  });
 
 });
