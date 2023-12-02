@@ -28,8 +28,11 @@ describe('password manager', () => {
   async function deployOnceFixture() {
     const [owner, ...otherAccounts] = await ethers.getSigners();
     const userAddress = otherAccounts[2].address;
+    const user = otherAccounts[2];
+    const platform = "google";
+
     const passContract: Pass = await new Pass__factory(owner).deploy();
-    return { passContract, owner, userAddress, otherAccounts };
+    return { passContract, owner, userAddress, user, otherAccounts, platform };
   }
 
   it("Check user listing functionality", async function () {
@@ -43,10 +46,9 @@ describe('password manager', () => {
     expect(!(await passContract.isWhitelist(userAddress)));
   });
 
-  it.only("Check platform listing functionality", async function () {
-    const { passContract } = await loadFixture(deployOnceFixture);
+  it("Check platform listing functionality", async function () {
+    const { passContract, platform } = await loadFixture(deployOnceFixture);
     
-    const platform = "google";
     expect(!(await passContract.isWhitelistPlatform(platform)));
 
     let tx = await passContract.registerPlatform(platform);
@@ -55,16 +57,24 @@ describe('password manager', () => {
     expect(!(await passContract.isWhitelistPlatform(platform)));
   });
 
-  it.only("Check platform listing functionality", async function () {
-    const { passContract } = await loadFixture(deployOnceFixture);
+  it.only("Check store password functionality", async function () {
+    const { passContract, owner, platform, userAddress, user } = await loadFixture(deployOnceFixture);
     
-    const platform = "google";
-    expect(!(await passContract.isWhitelistPlatform(platform)));
+    const { messageHashBytes, v, r, s } = await signMessage(user);
 
-    let tx = await passContract.registerPlatform(platform);
+    let tx = await passContract.registerFunction(userAddress);
     await tx.wait();
 
-    expect(!(await passContract.isWhitelistPlatform(platform)));
+    tx = await passContract.registerPlatform(platform);
+    await tx.wait();
+
+    const encryptedPassword = "fdh1fklsf";
+    tx = await passContract.storePassword(platform, encryptedPassword, messageHashBytes,
+      v, r, s, userAddress);
+    await tx.wait();
+
+    const pass = await passContract.connect(user).getPassword(platform);
+    expect(pass === encryptedPassword);
   });
 
 	// it("Should return the new greeting once it's changed", async () => {
