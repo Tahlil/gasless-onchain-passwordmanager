@@ -4,7 +4,8 @@ const fs = require("fs");
 const falcon = require("falcon-crypto");
 
 const bcrypt = require("bcrypt");
-
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 const keyFilePath = "key.txt";
 const textToEncrypt = "Hello, this is a secret message!";
 
@@ -84,13 +85,25 @@ async function generateAESKey() {
   }
 }
 
+function convertStringFromUintArray(uintArray) {
+    return decoder.decode(uintArray);
+}
+
+function convertUintArrayFromString(str) {
+    
+    return encoder.encode(str);
+    // return Buffer.from(str, 'utf-8');
+}
+
 async function main() {
   // AES 256 encryption and decryption
 //   const encryptedAES = await encryptWithAES256(textToEncrypt);
 //   const decryptedAES = decryptWithAES256(encryptedAES);
 //   console.log({ encryptedAES, decryptedAES });
-
-   falconEncryption("")
+    const arr = convertUintArrayFromString("hello");
+    console.log(arr);
+    console.log(convertStringFromUintArray(arr));
+//    falconEncryption("")
 }
 
 main();
