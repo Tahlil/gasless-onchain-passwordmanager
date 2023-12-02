@@ -9,6 +9,7 @@ contract Pass {
     mapping(address => bool) whitelisted;
     mapping(string => bool) whitelistedPlatforms;
     mapping (bytes32=>bool) usedSignatures;
+    mapping (address=>address) freeze;
     address owner;
     bytes constant prefix = '\x19Ethereum Signed Message:\n32';
 
@@ -54,5 +55,14 @@ contract Pass {
             platformName
         );
         paltformPasswords[keccak256(concatenatedData)] = encryptedPass;
+    }
+
+    function freezeAccount(
+        address userAddress,
+        address backupAddress
+    ) external {
+        require(whitelisted[userAddress], "not listed");
+        require(userAddress != backupAddress, "can not be same");
+        freeze[userAddress] = backupAddress;
     }
 }
