@@ -119,6 +119,8 @@ key.txt
 keyPr1.bin
 keyPr2.bin
 
+pass.json
+
 artifacts
 cache
 typechain

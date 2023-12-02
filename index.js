@@ -85,12 +85,7 @@ function decryptAES256Text(key, text) {
   return decrypted;
 }
 
-function generatePassword() {
-  return generator.generate({
-    length: 14,
-    numbers: true,
-  });
-}
+
 
 // Function to generate a strong AES key using bcrypt and async/await
 async function generateAESKey() {
