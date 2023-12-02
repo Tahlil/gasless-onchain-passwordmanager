@@ -8,6 +8,11 @@ contract Pass {
     mapping(bytes32 => string) paltformPasswords;
     mapping (address => bool) whitelisted;
     mapping (string => bool) whitelistedPlatforms;
+    address owner;
+
+    constructor () public {
+        owner  = msg.sender;
+    }
 
     function registerFunction(address addressToCheck) external{
         require(!whitelisted[addressToCheck], "Already reged");
