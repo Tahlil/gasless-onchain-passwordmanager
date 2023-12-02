@@ -10,7 +10,7 @@ contract Pass {
     mapping(string => bool) whitelistedPlatforms;
     mapping(bytes32 => bool) usedSignatures;
     mapping(address => address) freeze;
-    address owner;
+    address immutable owner;
     bytes constant prefix = "\x19Ethereum Signed Message:\n32";
 
     modifier onlyOwner() {
@@ -20,6 +20,14 @@ contract Pass {
 
     constructor() {
         owner = msg.sender;
+    }
+
+    function isWhitelist(address userAddreses) external view returns(bool) {
+        return whitelisted[userAddreses];
+    }
+
+     function isWhitelistPlatform(string calldata platform) external view returns(bool) {
+        return whitelistedPlatforms[platform];
     }
 
     function registerFunction(address addressToCheck) external {
@@ -69,7 +77,7 @@ contract Pass {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external {
+    ) external onlyOwner(){
         require(whitelisted[userAddress], "not listed");
         require(userAddress != backupAddress, "can not be same");
         bytes32 prefixedHashMessage = keccak256(
