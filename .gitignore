@@ -118,3 +118,7 @@ dist
 key.txt
 keyPr1.bin
 keyPr2.bin
+
+artifacts
+cache
+typechain
