@@ -24,6 +24,18 @@ describe('password manager', () => {
     expect(!(await passContract.isWhitelist(userAddress)));
   });
 
+  it.only("Check platform listing functionality", async function () {
+    const { passContract } = await loadFixture(deployOnceFixture);
+    
+    const platform = "google";
+    expect(!(await passContract.isWhitelistPlatform(platform)));
+
+    let tx = await passContract.registerPlatform(platform);
+    await tx.wait();
+
+    expect(!(await passContract.isWhitelistPlatform(platform)));
+  });
+
 	// it("Should return the new greeting once it's changed", async () => {
     // const { greeter } = await loadFixture(deployOnceFixture);
 	// 	let tx = await greeter.setGreeting('Hola, mundo!');
