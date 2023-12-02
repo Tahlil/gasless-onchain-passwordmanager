@@ -1,7 +1,9 @@
 let generator = require("generate-password");
 const aes256 = require("aes256");
 const fs = require("fs");
-const falcon = require("falcon-crypto'");
+// const falcon = require("falcon-crypto'");
+const bcrypt = require('bcrypt');
+const { mainModule } = require("process");
 
 const keyFilePath = "key.txt";
 const textToEncrypt = "Hello, this is a secret message!";
@@ -16,7 +18,7 @@ async function encryptWithAES256(textToEncrypt) {
     console.log("Key read from key.txt");
 
     // Use the existing key to encrypt text
-    encryptAES256Text(key, textToEncrypt);
+    return encryptAES256Text(key, textToEncrypt);
   } else {
     // If the key file doesn't exist, create a new key and save it to the file
     const key = await generateAESKey();
@@ -24,15 +26,34 @@ async function encryptWithAES256(textToEncrypt) {
     console.log("New key generated and saved in key.txt");
 
     // Use the generated key to encrypt text
-    encryptAES256Text(key, textToEncrypt);
+    return encryptAES256Text(key, textToEncrypt);
   }
+}
+
+function decryptWithAES256(textToDecrypt) {
+    if (fs.existsSync(keyFilePath)) {
+        // If the key file exists, read the key from the file
+        const key = fs.readFileSync(keyFilePath, "utf-8");
+        console.log("Key read from key.txt");
+    
+        // Use the existing key to encrypt text
+        return decryptAES256Text(key, textToDecrypt);
+      }
+      else{
+        throw Error("Key not found")
+      }
 }
 
 // Function to encrypt text using the AES key
 function encryptAES256Text(key, text) {
   const encrypted = aes256.encrypt(key, text);
-  console.log("Encrypted text:", encrypted);
+  return encrypted;
 }
+
+function decryptAES256Text(key, text) {
+    const decrypted = aes256.decrypt(key, text);
+    return decrypted;
+  }
 
 function generatePassword() {
   return generator.generate({
@@ -41,7 +62,6 @@ function generatePassword() {
   });
 }
 
-const bcrypt = require('bcrypt');
 
 // Function to generate a strong AES key using bcrypt and async/await
 async function generateAESKey() {
@@ -57,5 +77,16 @@ async function generateAESKey() {
 }
 
 
-encryptWithAES256(textToEncrypt)
+
+async function main() {
+    // AES 256 encryption and decryption
+    const encryptedAES = await encryptWithAES256(textToEncrypt);
+    const decryptedAES = decryptWithAES256(encryptedAES);
+    console.log({encryptedAES, decryptedAES});
+}
+
+
+main()
+// const decryptedAES = decryptWithAES256(encryptedAES);
+// console.log({encryptedAES, decryptedAES});
 // console.log(aes256);
