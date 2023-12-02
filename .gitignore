@@ -122,3 +122,5 @@ keyPr2.bin
 artifacts
 cache
 typechain
+
+.vscode
