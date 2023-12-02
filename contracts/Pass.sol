@@ -39,14 +39,14 @@ contract Pass {
         bytes32 _r,
         bytes32 _s,
         address userAddress
-    ) external {
+    ) external onlyOwner(){
         require(whitelisted[msg.sender], "user not listed");
         require(whitelistedPlatforms[platformName], "platform not listed");
         bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
 
         require(!usedSignatures[_hashedMessage], "already used");
         usedSignatures[_hashedMessage] = true;
-        
+
         require(userAddress == ecrecover(prefixedHashMessage, _v, _r, _s), "Invalid signature");
         
         bytes memory concatenatedData = abi.encodePacked(
