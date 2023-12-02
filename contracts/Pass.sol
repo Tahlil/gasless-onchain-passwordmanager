@@ -8,10 +8,10 @@ contract Pass {
     mapping(bytes32 => string) paltformPasswords;
     mapping(address => bool) whitelisted;
     mapping(string => bool) whitelistedPlatforms;
-    mapping (bytes32=>bool) usedSignatures;
-    mapping (address=>address) freeze;
+    mapping(bytes32 => bool) usedSignatures;
+    mapping(address => address) freeze;
     address owner;
-    bytes constant prefix = '\x19Ethereum Signed Message:\n32';
+    bytes constant prefix = "\x19Ethereum Signed Message:\n32";
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -40,16 +40,21 @@ contract Pass {
         bytes32 _r,
         bytes32 _s,
         address userAddress
-    ) external onlyOwner(){
+    ) external onlyOwner {
         require(whitelisted[msg.sender], "user not listed");
         require(whitelistedPlatforms[platformName], "platform not listed");
-        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        bytes32 prefixedHashMessage = keccak256(
+            abi.encodePacked(prefix, _hashedMessage)
+        );
 
         require(!usedSignatures[_hashedMessage], "already used");
         usedSignatures[_hashedMessage] = true;
 
-        require(userAddress == ecrecover(prefixedHashMessage, _v, _r, _s), "Invalid signature");
-        
+        require(
+            userAddress == ecrecover(prefixedHashMessage, _v, _r, _s),
+            "Invalid signature"
+        );
+
         bytes memory concatenatedData = abi.encodePacked(
             msg.sender,
             platformName
@@ -67,13 +72,16 @@ contract Pass {
     ) external {
         require(whitelisted[userAddress], "not listed");
         require(userAddress != backupAddress, "can not be same");
-         bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
-
+        bytes32 prefixedHashMessage = keccak256(
+            abi.encodePacked(prefix, _hashedMessage)
+        );
         require(!usedSignatures[_hashedMessage], "already used");
         usedSignatures[_hashedMessage] = true;
+        require(
+            userAddress == ecrecover(prefixedHashMessage, _v, _r, _s),
+            "Invalid signature"
+        );
 
-        require(userAddress == ecrecover(prefixedHashMessage, _v, _r, _s), "Invalid signature");
-        
         freeze[userAddress] = backupAddress;
     }
 }
