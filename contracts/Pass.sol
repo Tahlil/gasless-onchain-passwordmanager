@@ -72,6 +72,17 @@ contract Pass {
         paltformPasswords[keccak256(concatenatedData)] = encryptedPass;
     }
 
+    function getPassword(string calldata platform) external view returns(string memory){
+        require(whitelisted[msg.sender], "not listed");
+        require(whitelistedPlatforms[platform], "platform not listed");
+
+        bytes memory concatenatedData = abi.encodePacked(
+            msg.sender,
+            platform
+        );
+        return paltformPasswords[keccak256(concatenatedData)];
+    }
+
     function freezeAccount(
         address userAddress,
         address backupAddress,
