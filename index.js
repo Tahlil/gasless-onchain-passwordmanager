@@ -166,6 +166,56 @@ async function testAES256(params) {
   }
 }
 
+async function testFalcon() {
+  // Test AES
+  try {
+   const jsonData = fs.readFileSync(passFile, "utf-8");
+
+   let encryptedSize = {},
+     encryptionTime = {},
+     decryptionTime = {};
+
+   let encryptedSizeFilePath = "encSizeFal.json"; 
+   let encryptedTimeFilePath = "encTimeFal.json"; 
+   let decryptedTimeFilePath = "decTimeFal.json"; 
+   // Parse the JSON data into a JavaScript object
+   const data = JSON.parse(jsonData);
+
+   // Loop through the object properties
+   for (let key in data) {
+     if (Object.prototype.hasOwnProperty.call(data, key)) {
+       let startTime = performance.now();
+       const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ =
+       await falcon.keyPair();
+       const message = convertUintArrayFromString(data[key]);
+       const encryptedFalcon = await falcon.sign(message, keyPair.privateKey);
+      //  console.log(data[key]);
+      //  const strEncrypted = convertStringFromUintArray(encryptedFalcon)
+       let endTime = performance.now();
+       let elapsedTime = endTime - startTime;
+       encryptedSize[key] = encryptedFalcon.length;
+       encryptionTime[key] = elapsedTime.toFixed(3);
+       startTime = performance.now();
+      //  const encryptedUintArray = convertUintArrayFromString(strEncrypted)
+       const decrypted = convertStringFromUintArray(
+         await falcon.open(encryptedFalcon, keyPair.publicKey)
+       );
+      //  console.log({decrypted});
+       endTime = performance.now();
+       elapsedTime = endTime - startTime;
+       decryptionTime[key] = elapsedTime.toFixed(3);
+     }
+   }
+   storeJsonFile(encryptedSizeFilePath, encryptedSize);
+   storeJsonFile(encryptedTimeFilePath, encryptionTime);
+   storeJsonFile(decryptedTimeFilePath, decryptionTime);
+
+ } catch (err) {
+   console.error("Error reading JSON file:", err);
+ }
+}
+
+
 async function main() {
   // AES 256 encryption and decryption
   //   const encryptedAES = await encryptWithAES256(textToEncrypt);
@@ -182,7 +232,7 @@ async function main() {
   //  console.log(await falconDecryption(encryptedFalcon))
   // Start the timer
 
- 
+  testFalcon()
 
   // const dt=  [
   //   "w7miNakSiHQAsfEKFSOyhB6rg",

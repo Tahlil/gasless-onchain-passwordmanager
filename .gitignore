@@ -125,6 +125,10 @@ encSize.json
 encTime.json
 decTime.json
 
+encSizeFal.json
+encTimeFal.json
+decTimeFal.json
+
 artifacts
 cache
 typechain
