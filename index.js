@@ -122,24 +122,9 @@ function convertUintArrayFromString(str) {
   // return Buffer.from(str, 'utf-8');
 }
 
-async function main() {
-  // AES 256 encryption and decryption
-  //   const encryptedAES = await encryptWithAES256(textToEncrypt);
-  //   const decryptedAES = decryptWithAES256(encryptedAES);
-  //   console.log({ encryptedAES, decryptedAES });
-
-  //   const arr = convertUintArrayFromString("hello");
-  //   console.log(arr);
-  //   console.log(convertStringFromUintArray(arr));
-
-  //  const encryptedFalcon = await falconEncryption(textToEncrypt)
-  //  console.log({encryptedFalcon});
-  //  console.log(convertStringFromUintArray(encryptedFalcon).length);
-  //  console.log(await falconDecryption(encryptedFalcon))
-  // Start the timer
-
-  // Test AES
-  try {
+async function testAES256(params) {
+   // Test AES
+   try {
     const jsonData = fs.readFileSync(passFile, "utf-8");
 
     let encryptedSize = {},
@@ -179,6 +164,25 @@ async function main() {
   } catch (err) {
     console.error("Error reading JSON file:", err);
   }
+}
+
+async function main() {
+  // AES 256 encryption and decryption
+  //   const encryptedAES = await encryptWithAES256(textToEncrypt);
+  //   const decryptedAES = decryptWithAES256(encryptedAES);
+  //   console.log({ encryptedAES, decryptedAES });
+
+  //   const arr = convertUintArrayFromString("hello");
+  //   console.log(arr);
+  //   console.log(convertStringFromUintArray(arr));
+
+  //  const encryptedFalcon = await falconEncryption(textToEncrypt)
+  //  console.log({encryptedFalcon});
+  //  console.log(convertStringFromUintArray(encryptedFalcon).length);
+  //  console.log(await falconDecryption(encryptedFalcon))
+  // Start the timer
+
+ 
 
   // const dt=  [
   //   "w7miNakSiHQAsfEKFSOyhB6rg",
