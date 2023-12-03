@@ -117,6 +117,30 @@ dist
 
 key.txt
 
+
 artifacts
 cache
 typechain
+
+keyPr1.bin
+keyPr2.bin
+
+pass.json
+
+encSize.json
+encTime.json
+decTime.json
+
+encSizeFal.json
+encTimeFal.json
+decTimeFal.json
+
+x_values.*.txt
+xy_values.*.txt
+y_values.*.txt
+
+strPassesFalcon.txt
+
+.vscode
+
+.DS_Store
