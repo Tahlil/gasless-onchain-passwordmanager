@@ -121,6 +121,10 @@ keyPr2.bin
 
 pass.json
 
+encSize.json
+encTime.json
+decTime.json
+
 artifacts
 cache
 typechain

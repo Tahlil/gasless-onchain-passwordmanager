@@ -2,17 +2,16 @@ let generator = require("generate-password");
 const aes256 = require("aes256");
 const fs = require("fs");
 const falcon = require("falcon-crypto");
-const { performance } = require('perf_hooks');
+const { performance } = require("perf_hooks");
 const bcrypt = require("bcrypt");
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const keyFilePath = "key.txt";
-const passFile = "pass.json"
+const passFile = "pass.json";
 
 const keyPair1FilePath = "keyPr1.bin";
 const keyPair2FilePath = "keyPr2.bin";
 const textToEncrypt = "hello";
-
 
 async function falconEncryption(message) {
   message = convertUintArrayFromString(message);
@@ -61,6 +60,21 @@ async function encryptWithAES256(textToEncrypt) {
 
     // Use the generated key to encrypt text
     return encryptAES256Text(key, textToEncrypt);
+  }
+}
+
+async function encryptWithAES256WithKey(textToEncrypt, key) {
+  return encryptAES256Text(key, textToEncrypt);
+}
+
+function storeJsonFile(filePath, jsObj) {
+  const jsonData = JSON.stringify(jsObj, null, 2);
+
+  try {
+    fs.writeFileSync(filePath, jsonData);
+    console.log("Data written to JSON file successfully.");
+  } catch (err) {
+    console.error("Error writing JSON file:", err);
   }
 }
 
@@ -123,62 +137,76 @@ async function main() {
   //  console.log(convertStringFromUintArray(encryptedFalcon).length);
   //  console.log(await falconDecryption(encryptedFalcon))
   // Start the timer
-  
+
   // Test AES
-  // try {
-  //   const jsonData = fs.readFileSync(passFile, 'utf-8');
-  
-  //   // Parse the JSON data into a JavaScript object
-  //   const data = JSON.parse(jsonData);
-  
-  //   // Loop through the object properties
-  //   for (let key in data) {
-  //     console.time("executionTime");
-  //     if (Object.prototype.hasOwnProperty.call(data, key)) {
-  //         console.log(key);
-  //         const encryptedAES = await encryptWithAES256(data[key]);
-  //         console.log(encryptedAES.length);
-  //         decryptWithAES256(encryptedAES);
-  //     }
-  //     console.timeEnd("executionTime");
-  //   }
-  // } catch (err) {
-  //     console.error('Error reading JSON file:', err);
-  // }
+  try {
+    const jsonData = fs.readFileSync(passFile, "utf-8");
 
+    let encryptedSize = {},
+      encryptionTime = {},
+      decryptionTime = {};
 
-  const dt=  [
-    "w7miNakSiHQAsfEKFSOyhB6rg",
-    "eCJPAB3kgLqy38pcMTbQQAvGaxwKimHSMRrmKvnq",
-    "0gmZSmIyjaj3Wl0Nr4ZImdfnI7SqNX4kFOSHGuHXRcORmSh1Mh1GIx6",
-    "Yxh7mwWwaMEvL8rqY5KAsUpiMCX1oQoo2t6wwvmL9nyJK1xKpR3A9xQTcfol60vneEsD6w",
-    "jqBaXgwNneWzgoog6b0TNKDRdDadXZfw5kKNJTK5HUhTHL8bwIwrOPzAL1cLQmfJLkW0ZdxlLTPXEHmP4cKwv",
-    "NinYWLEHuesvxQXl7dK6hVy9WjXWOFe2RlTFdshxmG6rL1yjOQCG9WLF1wMoDKCDJDVtw4h1uOhJuNo98MKjhIIsyx6NiqjI5cy8"
-    ]
+    let encryptedSizeFilePath = "encSize.json"; 
+    let encryptedTimeFilePath = "encTime.json"; 
+    let decryptedTimeFilePath = "decTime.json"; 
+    // Parse the JSON data into a JavaScript object
+    const data = JSON.parse(jsonData);
 
-    let encryptedAES
-    let startTime = performance.now();
-    for (let i = 0; i < 10000; i++) {
-      encryptedAES = await encryptWithAES256(dt[0]);
-      decryptWithAES256(encryptedAES);
+    // Loop through the object properties
+    for (let key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        let startTime = performance.now();
+        const symmetricKey = await generateAESKey();
+        const encryptedAES = await encryptWithAES256WithKey(
+          data[key],
+          symmetricKey
+        );
+        let endTime = performance.now();
+        let elapsedTime = endTime - startTime;
+        encryptedSize[key] = encryptedAES.length;
+        encryptionTime[key] = elapsedTime.toFixed(3);
+        startTime = performance.now();
+        decryptAES256Text(symmetricKey, encryptedAES);
+        endTime = performance.now();
+        elapsedTime = endTime - startTime;
+        decryptionTime[key] = elapsedTime.toFixed(3);
+      }
     }
-    console.log(encryptedAES.length);
-   
-  
-    let endTime = performance.now();
-    
-    let elapsedTime = endTime - startTime;
-    console.log(`Time elapsed: ${elapsedTime} milliseconds`);
+    storeJsonFile(encryptedSizeFilePath, encryptedSize);
+    storeJsonFile(encryptedTimeFilePath, encryptionTime);
+    storeJsonFile(decryptedTimeFilePath, decryptionTime);
 
-  
+  } catch (err) {
+    console.error("Error reading JSON file:", err);
+  }
+
+  // const dt=  [
+  //   "w7miNakSiHQAsfEKFSOyhB6rg",
+  //   "eCJPAB3kgLqy38pcMTbQQAvGaxwKimHSMRrmKvnq",
+  //   "0gmZSmIyjaj3Wl0Nr4ZImdfnI7SqNX4kFOSHGuHXRcORmSh1Mh1GIx6",
+  //   "Yxh7mwWwaMEvL8rqY5KAsUpiMCX1oQoo2t6wwvmL9nyJK1xKpR3A9xQTcfol60vneEsD6w",
+  //   "jqBaXgwNneWzgoog6b0TNKDRdDadXZfw5kKNJTK5HUhTHL8bwIwrOPzAL1cLQmfJLkW0ZdxlLTPXEHmP4cKwv",
+  //   "NinYWLEHuesvxQXl7dK6hVy9WjXWOFe2RlTFdshxmG6rL1yjOQCG9WLF1wMoDKCDJDVtw4h1uOhJuNo98MKjhIIsyx6NiqjI5cy8"
+  //   ]
+
+  // let encryptedAES
+  // let startTime = performance.now();
+  // for (let i = 0; i < 10000; i++) {
+  //   encryptedAES = await encryptWithAES256(dt[0]);
+  //   decryptWithAES256(encryptedAES);
+  // }
+  // console.log(encryptedAES.length);
+
+  // let endTime = performance.now();
+
+  // let elapsedTime = endTime - startTime;
+  // console.log(`Time elapsed: ${elapsedTime} milliseconds`);
+
   // Your code here
-    // const encryptedAES = await encryptWithAES256(textToEncrypt);
-    // const decryptedAES = decryptWithAES256(encryptedAES);
+  // const encryptedAES = await encryptWithAES256(textToEncrypt);
+  // const decryptedAES = decryptWithAES256(encryptedAES);
 
   // End the timer and log the execution time
- 
 }
 
 main();
-
-
