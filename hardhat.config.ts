@@ -24,7 +24,10 @@ const chainIds = {
   fuji: 43113,
   avalanche: 43114,
   alfajores: 44787,
-  celo: 42220
+  celo: 42220,
+  arbitrumgoerli: 421613,
+  optimismgoerli: 420,
+  fantomtest: 0xfa2
 };
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -129,6 +132,24 @@ const config: HardhatUserConfig = {
       url: 'https://api.avax.network/ext/bc/C/rpc',
       chainId: chainIds.avalanche,
       // gasPrice: 20000000000,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    arbitrumgoerli: {
+      url: 'https://goerli-rollup.arbitrum.io/rpc',
+      chainId: chainIds.arbitrumgoerli,
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    optimismgoerli: {
+      url: 'https://goerli.optimism.io/',
+      chainId: chainIds.optimismgoerli,
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    fantomtest: {
+      url: 'https://rpc.testnet.fantom.network/',
+      chainId: chainIds.fantomtest,
+      // gasPrice: 20000000,
       accounts: [`0x${PRIVATE_KEY}`],
     },
     alfajores: {

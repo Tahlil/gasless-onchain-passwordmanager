@@ -116,6 +116,12 @@ dist
 .pnp.*
 
 key.txt
+
+
+artifacts
+cache
+typechain
+
 keyPr1.bin
 keyPr2.bin
 
@@ -134,10 +140,6 @@ xy_values.*.txt
 y_values.*.txt
 
 strPassesFalcon.txt
-
-artifacts
-cache
-typechain
 
 .vscode
 
