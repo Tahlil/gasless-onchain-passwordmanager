@@ -5,7 +5,7 @@ const falcon = require("falcon-crypto");
 const { performance } = require("perf_hooks");
 const bcrypt = require("bcrypt");
 const encoder = new TextEncoder();
-const decoder = new TextDecoder();
+const decoder = new TextDecoder('utf-8');
 const keyFilePath = "key.txt";
 const passFile = "pass.json";
 
@@ -174,10 +174,13 @@ async function testFalcon() {
    let encryptedSize = {},
      encryptionTime = {},
      decryptionTime = {};
+   
+   const encryptedFalconArray = [];
 
    let encryptedSizeFilePath = "encSizeFal.json"; 
    let encryptedTimeFilePath = "encTimeFal.json"; 
    let decryptedTimeFilePath = "decTimeFal.json"; 
+
    // Parse the JSON data into a JavaScript object
    const data = JSON.parse(jsonData);
 
@@ -189,13 +192,17 @@ async function testFalcon() {
        await falcon.keyPair();
        const message = convertUintArrayFromString(data[key]);
        const encryptedFalcon = await falcon.sign(message, keyPair.privateKey);
+       console.log(encryptedFalcon);
+       const stringValue = String.fromCharCode.apply(null, encryptedFalcon);
+       const newUintArray = new Uint8Array(stringValue.split('').map(char => char.charCodeAt(0)));
       //  console.log(data[key]);
       //  const strEncrypted = convertStringFromUintArray(encryptedFalcon)
        let endTime = performance.now();
        let elapsedTime = endTime - startTime;
-       encryptedSize[key] = encryptedFalcon.length;
+       encryptedSize[key] = stringValue.length;
        encryptionTime[key] = elapsedTime.toFixed(3);
        startTime = performance.now();
+       encryptedFalconArray.push(stringValue)
       //  const encryptedUintArray = convertUintArrayFromString(strEncrypted)
        const decrypted = convertStringFromUintArray(
          await falcon.open(encryptedFalcon, keyPair.publicKey)
@@ -206,9 +213,14 @@ async function testFalcon() {
        decryptionTime[key] = elapsedTime.toFixed(3);
      }
    }
+ // Convert array to a space-separated string
+const passes = encryptedFalconArray.join(' ');
+
+// Write the string into a text file
+fs.writeFileSync('strPassesFalcon.txt', passes, 'utf-8');
    storeJsonFile(encryptedSizeFilePath, encryptedSize);
-   storeJsonFile(encryptedTimeFilePath, encryptionTime);
-   storeJsonFile(decryptedTimeFilePath, decryptionTime);
+  //  storeJsonFile(encryptedTimeFilePath, encryptionTime);
+  //  storeJsonFile(decryptedTimeFilePath, decryptionTime);
 
  } catch (err) {
    console.error("Error reading JSON file:", err);

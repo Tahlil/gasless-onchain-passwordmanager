@@ -129,8 +129,16 @@ encSizeFal.json
 encTimeFal.json
 decTimeFal.json
 
+x_values.*.txt
+xy_values.*.txt
+y_values.*.txt
+
+strPassesFalcon.txt
+
 artifacts
 cache
 typechain
 
 .vscode
+
+.DS_Store
