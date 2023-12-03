@@ -33,6 +33,7 @@
     "edit-json-file": "^1.7.0",
     "falcon-crypto": "^1.0.6",
     "generate-password": "^1.7.1",
+    "js-conflux-sdk": "^2.1.6",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-dev.23",
     "solhint": "^3.3.7",
