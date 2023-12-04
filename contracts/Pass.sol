@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 
 contract Pass {
     // platform name + user hash
-    mapping(bytes32 => string) paltformPasswords;
+    mapping(bytes32 => string) platformPasswords;
     mapping(address => bool) whitelisted;
     mapping(string => bool) whitelistedPlatforms;
     mapping(bytes32 => bool) usedSignatures;
@@ -22,8 +22,8 @@ contract Pass {
         owner = msg.sender;
     }
 
-    function isWhitelist(address userAddreses) external view returns (bool) {
-        return whitelisted[userAddreses];
+    function isWhitelist(address userAddresses) external view returns (bool) {
+        return whitelisted[userAddresses];
     }
 
     function isWhitelistPlatform(
@@ -69,7 +69,7 @@ contract Pass {
             userAddress,
             platformName
         );
-        paltformPasswords[keccak256(concatenatedData)] = encryptedPass;
+        platformPasswords[keccak256(concatenatedData)] = encryptedPass;
     }
 
     function getPassword(string calldata platform) external view returns(string memory){
@@ -80,7 +80,7 @@ contract Pass {
             msg.sender,
             platform
         );
-        return paltformPasswords[keccak256(concatenatedData)];
+        return platformPasswords[keccak256(concatenatedData)];
     }
 
     function freezeAccount(
