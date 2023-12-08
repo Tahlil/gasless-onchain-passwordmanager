@@ -159,6 +159,11 @@ const config: HardhatUserConfig = {
       // gasPrice: 20000000,
       accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
+    conflux: {
+      url: "https://test.confluxrpc.com",
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
+    },
     celo: {
       url: 'https://forno.celo.org',
       chainId: chainIds.celo,
