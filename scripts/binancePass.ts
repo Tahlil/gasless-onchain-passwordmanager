@@ -9,7 +9,7 @@ const binancePassDataPath = path.join(__dirname, "../", "results", "binancePass.
 async function main() {
 
     let finalValue = []
-    let startTime, endTime;
+    let startTime, endTime, transactionFee, gasPrice: any;
 
     for(let i = 1; i <= 5; i++){
 
@@ -47,7 +47,12 @@ async function main() {
         const gasUsedRegisterFunction = ethers.utils.formatUnits(txReceiptRegisterFunction.gasUsed, 18);
         console.log("RegisterFunction used gas: ", gasUsedRegisterFunction);
 
-        obj["registerFunction"][timestampRegisterFunction] = `${txReceiptRegisterFunction.gasUsed}/${endTime-startTime}ms`
+        gasPrice = txReceiptRegisterFunction.effectiveGasPrice
+
+        transactionFee = txReceiptRegisterFunction.gasUsed as any *  gasPrice;
+
+        obj["registerFunction"][timestampRegisterFunction] = `${transactionFee}/${endTime-startTime}ms`
+        
 
         //RegisterPlatform Transaction
         obj["registerPlatform"] = {}
@@ -63,7 +68,11 @@ async function main() {
         const gasUsedRegisterPlatform = ethers.utils.formatUnits(txReceiptRegisterPlatform.gasUsed, 18);
         console.log("RegisterPlatform used gas: ", gasUsedRegisterPlatform);
 
-        obj["registerPlatform"][timestampRegisterPlatform] = `${txReceiptRegisterPlatform.gasUsed}/${endTime-startTime}ms`
+        gasPrice = txReceiptRegisterFunction.effectiveGasPrice
+
+        transactionFee = txReceiptRegisterFunction.gasUsed as any *  gasPrice;
+        
+        obj["registerPlatform"][timestampRegisterPlatform] = `${transactionFee}/${endTime-startTime}ms`
 
         //Store Password Transaction
         obj["storePassword"] = {}
@@ -79,7 +88,11 @@ async function main() {
         const gasUsedStorePassword = ethers.utils.formatUnits(txReceiptStorePassword.gasUsed, 18);
         console.log("Store Password used gas: ", gasUsedStorePassword);
 
-        obj["storePassword"][timestampStorePassword] = `${txReceiptStorePassword.gasUsed}/${endTime-startTime}ms`
+        gasPrice = txReceiptStorePassword.effectiveGasPrice
+
+        transactionFee = txReceiptStorePassword.gasUsed as any *  gasPrice;
+
+        obj["storePassword"][timestampStorePassword] = `${transactionFee}/${endTime-startTime}ms`
 
         //Get Password
         obj["getPassword"] = {}
@@ -109,15 +122,18 @@ async function main() {
         const gasUsedFreezeAccount = ethers.utils.formatUnits(txReceiptFreezeAccount.gasUsed, 18);
         console.log("Freeze Account used gas: ", gasUsedFreezeAccount);
 
-        obj["freezeAccount"][timestampFreezeAccount] = `${txReceiptFreezeAccount.gasUsed}/${endTime-startTime}ms`
+        gasPrice = txReceiptFreezeAccount.effectiveGasPrice
+
+        transactionFee = txReceiptFreezeAccount.gasUsed as any *  gasPrice;
+
+        obj["freezeAccount"][timestampFreezeAccount] = `${transactionFee}/${endTime-startTime}ms`
 
         finalValue.push(obj);
 
         fs.writeFileSync(binancePassDataPath, JSON.stringify(finalValue));
+
     }
 
-
-    
 
 }
 

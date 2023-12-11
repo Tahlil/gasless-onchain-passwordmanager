@@ -38,7 +38,7 @@ async function main () {
     [contractOwner, ...otherAccounts] = await ethers.getSigners();
 
     let finalValue = []
-    let startTime, endTime;
+    let startTime, endTime, transactionFee, gasPrice: any;
 
     // Create instance for the contract to be deployed
     const contractInstance = conflux.Contract({abi, bytecode})
@@ -71,7 +71,11 @@ async function main () {
         const gasUsedRegisterFunction = ethers.utils.formatUnits(txReceiptRegisterFunction.gasUsed, 18);
         console.log("RegisterFunction used gas: ", gasUsedRegisterFunction);
 
-        obj["registerFunction"][timestampRegisterFunction] = `${txReceiptRegisterFunction.gasUsed}/${endTime-startTime}ms`
+        //gasPrice = txReceiptRegisterFunction.effectiveGasPrice
+
+        //transactionFee = txReceiptRegisterFunction.gasUsed as any *  gasPrice;
+
+        obj["registerFunction"][timestampRegisterFunction] = `${txReceiptRegisterFunction.gasFee}/${endTime-startTime}ms`
 
         //RegisterPlatform Transaction
         obj["registerPlatform"] = {}
@@ -87,7 +91,11 @@ async function main () {
         const gasUsedRegisterPlatform = ethers.utils.formatUnits(txReceiptRegisterPlatform.gasUsed, 18);
         console.log("RegisterPlatform used gas: ", gasUsedRegisterPlatform);
 
-        obj["registerPlatform"][timestampRegisterPlatform] = `${txReceiptRegisterPlatform.gasUsed}/${endTime-startTime}ms`
+        //gasPrice = txReceiptRegisterPlatform.effectiveGasPrice
+
+        //transactionFee = txReceiptRegisterPlatform.gasUsed as any *  gasPrice;
+        
+        obj["registerPlatform"][timestampRegisterPlatform] = `${txReceiptRegisterPlatform.gasFee}/${endTime-startTime}ms`
 
         //Store Password Transaction
         obj["storePassword"] = {}
@@ -103,7 +111,11 @@ async function main () {
         const gasUsedStorePassword = ethers.utils.formatUnits(txReceiptStorePassword.gasUsed, 18);
         console.log("Store Password used gas: ", gasUsedStorePassword);
 
-        obj["storePassword"][timestampStorePassword] = `${txReceiptStorePassword.gasUsed}/${endTime-startTime}ms`
+        //gasPrice = txReceiptStorePassword.effectiveGasPrice
+
+        //transactionFee = txReceiptStorePassword.gasUsed as any *  gasPrice;
+
+        obj["storePassword"][timestampStorePassword] = `${txReceiptStorePassword.gasFee}/${endTime-startTime}ms`
 
         //Get Password
         obj["getPassword"] = {}
@@ -133,7 +145,11 @@ async function main () {
         const gasUsedFreezeAccount = ethers.utils.formatUnits(txReceiptFreezeAccount.gasUsed, 18);
         console.log("Freeze Account used gas: ", gasUsedFreezeAccount);
 
-        obj["freezeAccount"][timestampFreezeAccount] = `${txReceiptFreezeAccount.gasUsed}/${endTime-startTime}ms`
+        //gasPrice = txReceiptFreezeAccount.effectiveGasPrice
+
+        //transactionFee = txReceiptFreezeAccount.gasUsed as any *  gasPrice;
+
+        obj["freezeAccount"][timestampFreezeAccount] = `${txReceiptFreezeAccount.gasFee}/${endTime-startTime}ms`
 
         finalValue.push(obj);
 
