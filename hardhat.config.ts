@@ -170,6 +170,11 @@ const config: HardhatUserConfig = {
       // gasPrice: 20000000000,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    nile: {
+      url: "https://nile.trongrid.io",
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
+    }
   },
  
   solidity: {
