@@ -31,6 +31,7 @@ const chainIds = {
 };
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY1 = process.env.PRIVATE_KEY1;
 const API_KEY  = process.env.RPC_NODE_API_KEY;
 const MNEMONIC  = process.env.MNEMONIC;
 const ETHERSCAN_API_KEY  = process.env.ETHERSCAN_API_KEY as string;
@@ -90,7 +91,7 @@ const config: HardhatUserConfig = {
     },
     sepolia: {
       url: getRPCURL('sepolia', defaultRPCNodeProvider),
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
       chainId: chainIds.sepolia,
     },
     mainnet: {
@@ -102,7 +103,7 @@ const config: HardhatUserConfig = {
       url: 'https://data-seed-prebsc-2-s1.binance.org:8545/',
       chainId: chainIds.bsctest,
       gasPrice: 20000000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     bscmain: {
       url: 'https://bsc-dataseed.binance.org/',
@@ -114,7 +115,7 @@ const config: HardhatUserConfig = {
       url: 'https://rpc-mumbai.maticvigil.com/',
       chainId: chainIds.mumbai,
       gasPrice: 20000000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     polygon: {
       url: 'https://polygon-rpc.com/',
@@ -126,7 +127,7 @@ const config: HardhatUserConfig = {
       url: 'https://api.avax-test.network/ext/bc/C/rpc',
       chainId: chainIds.fuji,
       // gasPrice: 20000000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     avalanche: {
       url: 'https://api.avax.network/ext/bc/C/rpc',
@@ -138,25 +139,30 @@ const config: HardhatUserConfig = {
       url: 'https://goerli-rollup.arbitrum.io/rpc',
       chainId: chainIds.arbitrumgoerli,
       // gasPrice: 20000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     optimismgoerli: {
       url: 'https://goerli.optimism.io/',
       chainId: chainIds.optimismgoerli,
       // gasPrice: 20000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     fantomtest: {
       url: 'https://rpc.testnet.fantom.network/',
       chainId: chainIds.fantomtest,
       // gasPrice: 20000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     alfajores: {
       url: 'https://alfajores-forno.celo-testnet.org',
       chainId: chainIds.alfajores,
       // gasPrice: 20000000,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
+    },
+    conflux: {
+      url: "https://test.confluxrpc.com",
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
     },
     celo: {
       url: 'https://forno.celo.org',
@@ -164,6 +170,11 @@ const config: HardhatUserConfig = {
       // gasPrice: 20000000000,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    nile: {
+      url: "https://nile.trongrid.io",
+      // gasPrice: 20000000,
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY1}`],
+    }
   },
  
   solidity: {
