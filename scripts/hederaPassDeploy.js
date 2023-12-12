@@ -24,16 +24,12 @@ client.setOperator(operatorId, operatorPrivateKey);
 
 async function main() {
 
-	const contractArtifact = await artifacts.readArtifact("Greeter");
+	const contractArtifact = await artifacts.readArtifact("Pass");
 	const bytecode = contractArtifact.bytecode;
 
 	const contractInstantiateTx = new ContractCreateFlow()
 		.setBytecode(bytecode)
-		.setGas(500000)
-		.setConstructorParameters(
-			new ContractFunctionParameters()
-				.addString("Hello world")
-		);
+		.setGas(500000);
 	const contractInstantiateSubmit = await contractInstantiateTx.execute(client);
 	const contractInstantiateRx = await contractInstantiateSubmit.getReceipt(client);
 	
@@ -44,7 +40,7 @@ async function main() {
 	console.log(`- The Greeter smart contract ID in Solidity format is: ${'0x' + contractAddress} \n`);
 
 	try {
-        await fs.writeFileSync(contractDetailsDataPath, JSON.stringify({greet: contractId, link: `https://hashscan.io/testnet/contract/${contractId}`}, null, 2));
+        await fs.writeFileSync(contractDetailsDataPath, JSON.stringify({pass: contractId+"", link: `https://hashscan.io/testnet/contract/${contractId}`}, null, 2));
         console.log('File created and data written successfully.');
       } catch (err) {
         console.error('Error creating file:', err);
