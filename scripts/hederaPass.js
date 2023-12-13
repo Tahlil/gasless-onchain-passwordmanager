@@ -58,7 +58,14 @@ async function main() {
   finally{
     const passContractId = passKey;
     console.log({passContractId});
+
+    // Register platform
+    console.time("Set_Pass_Value_timer");
+    const txReceipt = await registerFunction(passContractId);
+    console.timeEnd("Set_Pass_Value_timer");
+    console.log({ txReceipt });
     process.exit();
+
   }
 
  
@@ -71,11 +78,7 @@ async function main() {
   //     } \n`
   //   );
 
-  //   //Set Greet Value
-  //   console.time("Set_Pass_Value_timer");
-  //   const txReceipt = await registerPlatform(passContractId);
-  //   console.timeEnd("Set_Pass_Value_timer");
-  //   console.log({ txReceipt });
+ 
 
   //   process.exit();
 }
@@ -86,7 +89,7 @@ async function registerFunction(passContractId) {
     .setGas(200000)
     .setFunction(
       "registerFunction",
-      new ContractFunctionParameters().addAddress(solidityAddress)
+      new ContractFunctionParameters().addAddress("0xcb482912Fd8461B8BF8408BA1509192930766C8B")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
