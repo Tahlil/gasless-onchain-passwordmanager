@@ -1,9 +1,10 @@
 const path = require("path");
 const fs = require("fs");
-const { ethers, artifacts } = require("hardhat");
+const { artifacts } = require("hardhat");
+const ethers = require("ethers");
 
 require("dotenv").config({ path: path.resolve(__dirname, "..", ".env") });
-
+const { hethers } = require("@hashgraph/hethers");
 const {
   AccountId,
   PrivateKey,
@@ -39,7 +40,12 @@ async function main() {
   //   const contractInstantiateRx = await contractInstantiateSubmit.getReceipt(
   //     client
   //   );
-  const filePath = path.join(__dirname, "../", "deployInfo", "deployPassHedera.json");
+  const filePath = path.join(
+    __dirname,
+    "../",
+    "deployInfo",
+    "deployPassHedera.json"
+  );
   let passKey;
   try {
     // Read the file
@@ -54,21 +60,16 @@ async function main() {
     console.log('Value of "pass" key:', passKey);
   } catch (error) {
     console.error("Error reading/parsing the file:", error);
-  }
-  finally{
+  } finally {
     const passContractId = passKey;
-    console.log({passContractId});
-
+   
     // Register platform
     console.time("Set_Pass_Value_timer");
-    const txReceipt = await registerFunction(passContractId);
+    const txReceipt = await storePassword(passContractId);
     console.timeEnd("Set_Pass_Value_timer");
     console.log({ txReceipt });
     process.exit();
-
   }
-
- 
 
   //   const contractAddress = contractId.toSolidityAddress();
   //   console.log(`- The Password manager smart contract ID is: ${passContractId} \n`);
@@ -77,8 +78,6 @@ async function main() {
   //       "0x" + contractAddress
   //     } \n`
   //   );
-
- 
 
   //   process.exit();
 }
@@ -89,7 +88,9 @@ async function registerFunction(passContractId) {
     .setGas(200000)
     .setFunction(
       "registerFunction",
-      new ContractFunctionParameters().addAddress("0xcb482912Fd8461B8BF8408BA1509192930766C8B")
+      new ContractFunctionParameters().addAddress(
+        "0xcb482912Fd8461B8BF8408BA1509192930766C8B"
+      )
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
@@ -104,6 +105,48 @@ async function registerPlatform(passContractId) {
     .setFunction(
       "registerPlatform",
       new ContractFunctionParameters().addString("hfewfhewhdf")
+    );
+  let contractExecuteSubmit = await contractExecuteTx.execute(client);
+  let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+
+  return contractExecuteRx;
+}
+
+async function storePassword(passContractId) {
+  // Your string data
+  let myString = "TestTest";
+
+  // Truncate or pad the string to 32 bytes
+  if (myString.length > 32) {
+    myString = myString.slice(0, 32); // Truncate if longer than 32 bytes
+  } else {
+    myString = ethers.utils.formatBytes32String(myString).padEnd(66, "0"); // Pad with zeros to reach 32 bytes
+  }
+
+  // Convert string to bytes32
+  const bytes32Param = ethers.utils.arrayify(myString);
+
+  const wallet = new hethers.Wallet(
+    process.env.HEDERA_OPERATOR_PVKEY,
+    hethers.providers.getDefaultProvider("testnet")
+  );
+  let signature = await wallet.signMessage(bytes32Param);
+  const r = signature.slice(0, 66);
+  const s = "0x" + signature.slice(66, 130);
+  const v = parseInt(signature.slice(130, 132), 16);
+  let contractExecuteTx = new ContractExecuteTransaction()
+    .setContractId(passContractId)
+    .setGas(200000)
+    .setFunction(
+      "storePassword",
+      new ContractFunctionParameters()
+        .addString("hfewfhewhdf")
+        .addString("fdh1fklsf")
+        .addBytes32(bytes32Param)
+        .addUint8(v)
+        .addBytes32(ethers.utils.arrayify(r))
+        .addBytes32(ethers.utils.arrayify(s))
+        .addAddress("0xcb482912Fd8461B8BF8408BA1509192930766C8B")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
