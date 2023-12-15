@@ -62,12 +62,12 @@ async function main() {
     console.error("Error reading/parsing the file:", error);
   } finally {
     const passContractId = passKey;
-   
+
     // Register platform
     console.time("Set_Pass_Value_timer");
-    const txReceipt = await storePassword(passContractId);
+    const txFee = await registerPlatform(passContractId);
     console.timeEnd("Set_Pass_Value_timer");
-    console.log({ txReceipt });
+    console.log({ txFee });
     process.exit();
   }
 
@@ -95,7 +95,13 @@ async function registerFunction(passContractId) {
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
 
-  return contractExecuteRx;
+  let contractExecuteRec = await contractExecuteSubmit.getRecord(client);
+
+  return (
+    (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+      contractExecuteRx.exchangeRate.exchangeRateInCents) /
+    10 ** 10
+  );
 }
 
 async function registerPlatform(passContractId) {
@@ -104,12 +110,18 @@ async function registerPlatform(passContractId) {
     .setGas(200000)
     .setFunction(
       "registerPlatform",
-      new ContractFunctionParameters().addString("hfewfhewhdf")
+      new ContractFunctionParameters().addString("111111")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
 
-  return contractExecuteRx;
+  let contractExecuteRec = await contractExecuteSubmit.getRecord(client);
+
+  return (
+    (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+      contractExecuteRx.exchangeRate.exchangeRateInCents) /
+    10 ** 10
+  );
 }
 
 async function storePassword(passContractId) {
@@ -130,7 +142,7 @@ async function storePassword(passContractId) {
     process.env.PRIVATE_KEY,
     hethers.providers.getDefaultProvider("testnet")
   );
-console.log(wallet.address);
+  console.log(wallet.address);
   let signature = await wallet.signMessage(bytes32Param);
   const r = signature.slice(0, 66);
   const s = "0x" + signature.slice(66, 130);
@@ -147,14 +159,18 @@ console.log(wallet.address);
         .addUint8(v)
         .addBytes32(ethers.utils.arrayify(r))
         .addBytes32(ethers.utils.arrayify(s))
-        .addAddress(wallet.address+"")
+        .addAddress(wallet.address + "")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+
   let contractExecuteRec = await contractExecuteSubmit.getRecord(client);
 
-console.log(contractExecuteRec);
-  return contractExecuteRx;
+  return (
+    (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+      contractExecuteRx.exchangeRate.exchangeRateInCents) /
+    10 ** 10
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
