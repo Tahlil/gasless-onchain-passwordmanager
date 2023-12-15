@@ -126,10 +126,11 @@ async function storePassword(passContractId) {
   // Convert string to bytes32
   const bytes32Param = ethers.utils.arrayify(myString);
 
-  const wallet = new hethers.Wallet(
-    process.env.HEDERA_OPERATOR_PVKEY,
+  const wallet = new ethers.Wallet(
+    process.env.PRIVATE_KEY,
     hethers.providers.getDefaultProvider("testnet")
   );
+console.log(wallet.address);
   let signature = await wallet.signMessage(bytes32Param);
   const r = signature.slice(0, 66);
   const s = "0x" + signature.slice(66, 130);
@@ -146,11 +147,13 @@ async function storePassword(passContractId) {
         .addUint8(v)
         .addBytes32(ethers.utils.arrayify(r))
         .addBytes32(ethers.utils.arrayify(s))
-        .addAddress("0xcb482912Fd8461B8BF8408BA1509192930766C8B")
+        .addAddress(wallet.address+"")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+  let contractExecuteRec = await contractExecuteSubmit.getRecord(client);
 
+console.log(contractExecuteRec);
   return contractExecuteRx;
 }
 
