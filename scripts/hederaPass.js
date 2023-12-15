@@ -65,7 +65,7 @@ async function main() {
 
     // Register platform
     console.time("Set_Pass_Value_timer");
-    const txFee = await registerPlatform(passContractId);
+    const txFee = await freezeAccount(passContractId);
     console.timeEnd("Set_Pass_Value_timer");
     console.log({ txFee });
     process.exit();
@@ -172,6 +172,54 @@ async function storePassword(passContractId) {
     10 ** 10
   );
 }
+
+async function freezeAccount(passContractId) {
+    // Your string data
+    let myString = "TestTest";
+  
+    // Truncate or pad the string to 32 bytes
+    if (myString.length > 32) {
+      myString = myString.slice(0, 32); // Truncate if longer than 32 bytes
+    } else {
+      myString = ethers.utils.formatBytes32String(myString).padEnd(66, "0"); // Pad with zeros to reach 32 bytes
+    }
+  
+    // Convert string to bytes32
+    const bytes32Param = ethers.utils.arrayify(myString);
+  
+    const wallet = new ethers.Wallet(
+      process.env.PRIVATE_KEY,
+      hethers.providers.getDefaultProvider("testnet")
+    );
+    console.log(wallet.address);
+    let signature = await wallet.signMessage(bytes32Param);
+    const r = signature.slice(0, 66);
+    const s = "0x" + signature.slice(66, 130);
+    const v = parseInt(signature.slice(130, 132), 16);
+    let contractExecuteTx = new ContractExecuteTransaction()
+      .setContractId(passContractId)
+      .setGas(200000)
+      .setFunction(
+        "freezeAccount",
+        new ContractFunctionParameters()
+          .addAddress(wallet.address + "")
+          .addAddress(solidityAddress)
+          .addBytes32(bytes32Param)
+          .addUint8(v)
+          .addBytes32(ethers.utils.arrayify(r))
+          .addBytes32(ethers.utils.arrayify(s))
+      );
+    let contractExecuteSubmit = await contractExecuteTx.execute(client);
+    let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
+  
+    let contractExecuteRec = await contractExecuteSubmit.getRecord(client);
+  
+    return (
+      (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+        contractExecuteRx.exchangeRate.exchangeRateInCents) /
+      10 ** 10
+    );
+  }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
