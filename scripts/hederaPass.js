@@ -29,47 +29,89 @@ const client = Client.forTestnet();
 client.setOperator(operatorId, operatorPrivateKey);
 
 async function main() {
-  //   const contractArtifact = await artifacts.readArtifact("Pass");
-  //   const contractABI = contractArtifact.abi;
-  //   const bytecode = contractArtifact.bytecode;
+    let startTime, endTime;
+    const contractArtifact = await artifacts.readArtifact("Pass");
 
-  //   const contractInstantiateTx = new ContractCreateFlow()
-  //     .setBytecode(bytecode)
-  //     .setGas(500000);
-  //   const contractInstantiateSubmit = await contractInstantiateTx.execute(client);
-  //   const contractInstantiateRx = await contractInstantiateSubmit.getReceipt(
-  //     client
-  //   );
-  const filePath = path.join(
-    __dirname,
-    "../",
-    "deployInfo",
-    "deployPassHedera.json"
-  );
-  let passKey;
-  try {
-    // Read the file
-    const data = await fs.readFileSync(filePath, "utf8");
+    const bytecode = contractArtifact.bytecode;
 
-    // Parse JSON data
-    const jsonData = JSON.parse(data);
-
-    // Access the "pass" key
-    passKey = jsonData.pass;
-
-    console.log('Value of "pass" key:', passKey);
-  } catch (error) {
-    console.error("Error reading/parsing the file:", error);
-  } finally {
-    const passContractId = passKey;
-
-    // Register platform
+    const contractInstantiateTx = new ContractCreateFlow()
+      .setBytecode(bytecode)
+      .setGas(500000);
+    const contractInstantiateSubmit = await contractInstantiateTx.execute(client);
+    const contractInstantiateRx = await contractInstantiateSubmit.getReceipt(
+      client
+    );
+    const passContractId = contractInstantiateRx.contractId;
+    
+    const obj = {}
+    
+    let timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
-    const txFee = await getPassword(passContractId);
+    startTime = performance.now();
+    let txFee = await registerFunction(passContractId);
+    endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    console.log({ txFee });
+    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+
+    timestampRegisterFunction = Date.now()
+    console.time("Set_Pass_Value_timer");
+    startTime = performance.now();
+    txFee = await registerPlatform(passContractId);
+    endTime = performance.now();
+    console.timeEnd("Set_Pass_Value_timer");
+    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+
+    timestampRegisterFunction = Date.now()
+    console.time("Set_Pass_Value_timer");
+    startTime = performance.now();
+    txFee = await storePassword(passContractId);
+    endTime = performance.now();
+    console.timeEnd("Set_Pass_Value_timer");
+    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+
+    timestampRegisterFunction = Date.now()
+    console.time("Set_Pass_Value_timer");
+    startTime = performance.now();
+    txFee = await getPassword(passContractId);
+    endTime = performance.now();
+    console.timeEnd("Set_Pass_Value_timer");
+    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+
+    timestampRegisterFunction = Date.now()
+    console.time("Set_Pass_Value_timer");
+    startTime = performance.now();
+    txFee = await freezeAccount(passContractId);
+    endTime = performance.now();
+    console.timeEnd("Set_Pass_Value_timer");
+    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+
     process.exit();
-  }
+//   const filePath = path.join(
+//     __dirname,
+//     "../",
+//     "deployInfo",
+//     "deployPassHedera.json"
+//   );
+//   let passKey;
+//   try {
+//     // Read the file
+//     const data = await fs.readFileSync(filePath, "utf8");
+
+//     // Parse JSON data
+//     const jsonData = JSON.parse(data);
+
+//     // Access the "pass" key
+//     passKey = jsonData.pass;
+
+//     console.log('Value of "pass" key:', passKey);
+//   } catch (error) {
+//     console.error("Error reading/parsing the file:", error);
+//   } finally {
+//     const passContractId = passKey;
+
+//     // Register platform
+  
+//   }
 
   //   const contractAddress = contractId.toSolidityAddress();
   //   console.log(`- The Password manager smart contract ID is: ${passContractId} \n`);
@@ -110,7 +152,7 @@ async function registerPlatform(passContractId) {
     .setGas(200000)
     .setFunction(
       "registerPlatform",
-      new ContractFunctionParameters().addString("111111")
+      new ContractFunctionParameters().addString("Test")
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
   let contractExecuteRx = await contractExecuteSubmit.getReceipt(client);
@@ -126,7 +168,7 @@ async function registerPlatform(passContractId) {
 
 async function storePassword(passContractId) {
   // Your string data
-  let myString = "TestTest";
+  let myString = "123321asddsa";
 
   // Truncate or pad the string to 32 bytes
   if (myString.length > 32) {
@@ -153,7 +195,7 @@ async function storePassword(passContractId) {
     .setFunction(
       "storePassword",
       new ContractFunctionParameters()
-        .addString("hfewfhewhdf")
+        .addString("Test")
         .addString("fdh1fklsf")
         .addBytes32(bytes32Param)
         .addUint8(v)
