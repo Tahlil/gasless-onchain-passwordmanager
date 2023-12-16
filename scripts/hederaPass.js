@@ -65,7 +65,7 @@ async function main() {
 
     // Register platform
     console.time("Set_Pass_Value_timer");
-    const txFee = await freezeAccount(passContractId);
+    const txFee = await getPassword(passContractId);
     console.timeEnd("Set_Pass_Value_timer");
     console.log({ txFee });
     process.exit();
@@ -89,7 +89,7 @@ async function registerFunction(passContractId) {
     .setFunction(
       "registerFunction",
       new ContractFunctionParameters().addAddress(
-        "0xcb482912Fd8461B8BF8408BA1509192930766C8B"
+        "0xa3a9d3a54630a1b8886f01038b2f9f5076025686"
       )
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
@@ -220,6 +220,35 @@ async function freezeAccount(passContractId) {
       10 ** 10
     );
   }
+
+  async function getPassword(greeterContractId) {
+	let contractExecuteTx = await new ContractExecuteTransaction()
+		.setContractId(greeterContractId)
+		.setGas(200000)
+		.setFunction("getPassword",
+        new ContractFunctionParameters()
+          .addString("111111"))
+		.execute(client);
+        let contractExecuteRx = await contractExecuteTx.getReceipt(client);
+        let contractExecuteRec = await contractExecuteTx.getRecord(client);
+ 
+        return (
+          (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+            contractExecuteRx.exchangeRate.exchangeRateInCents) /
+          10 ** 10
+        );   
+        // let contractExecuteSubmit = await contractExecuteTx.execute(client);
+        // let contractExecuteRx = await contractExecuteTx.getReceipt(client);
+      
+        // let contractExecuteRec = await contractExecuteTx.getRecord(client);
+      
+        // return (
+        //   (Number(contractExecuteRec.transactionFee._valueInTinybar) *
+        //     contractExecuteRx.exchangeRate.exchangeRateInCents) /
+        //   10 ** 10
+        // );    
+
+ }  
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
