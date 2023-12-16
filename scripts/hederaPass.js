@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { artifacts } = require("hardhat");
 const ethers = require("ethers");
+const hederaPassDataPath = path.join(__dirname, "../", "results", "hederaPassUSD.json");
 
 require("dotenv").config({ path: path.resolve(__dirname, "..", ".env") });
 const { hethers } = require("@hashgraph/hethers");
@@ -42,16 +43,20 @@ async function main() {
       client
     );
     const passContractId = contractInstantiateRx.contractId;
-    
+	console.log(`- The Greeter smart contract ID is: ${passContractId} \n`);
+
+    await registerFunction(passContractId, "0xa3a9d3a54630a1b8886f01038b2f9f5076025686");
+
     const obj = {}
     
     let timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
     startTime = performance.now();
-    let txFee = await registerFunction(passContractId);
+    let txFee = await registerFunction(passContractId, "0xcb482912Fd8461B8BF8408BA1509192930766C8B");
     endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+    obj["registerFunction"] = {[timestampRegisterFunction]: `${txFee}/${endTime-startTime}ms`};
+    console.log("Register function done");
 
     timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
@@ -59,7 +64,9 @@ async function main() {
     txFee = await registerPlatform(passContractId);
     endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+    obj["registerPlatform"] = {[timestampRegisterFunction]: `${txFee}/${endTime-startTime}ms`};
+    console.log("Register platform done");
+
 
     timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
@@ -67,7 +74,8 @@ async function main() {
     txFee = await storePassword(passContractId);
     endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+    obj["storePassword"] = {[timestampRegisterFunction]: `${txFee}/${endTime-startTime}ms`};
+    console.log("Store password done");
 
     timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
@@ -75,7 +83,8 @@ async function main() {
     txFee = await getPassword(passContractId);
     endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+    obj["getPassword"] = {[timestampRegisterFunction]: `${txFee}/${endTime-startTime}ms`};
+    console.log("Get password done");
 
     timestampRegisterFunction = Date.now()
     console.time("Set_Pass_Value_timer");
@@ -83,8 +92,10 @@ async function main() {
     txFee = await freezeAccount(passContractId);
     endTime = performance.now();
     console.timeEnd("Set_Pass_Value_timer");
-    obj["registerFunction"][timestampRegisterFunction] = `${txFee}/${endTime-startTime}ms`;
+    obj["freezeAccount"] = {[timestampRegisterFunction]: `${txFee}/${endTime-startTime}ms`};
+    console.log("Freeze account done");
 
+    fs.writeFileSync(hederaPassDataPath, JSON.stringify(obj), null, 2);
     process.exit();
 //   const filePath = path.join(
 //     __dirname,
@@ -124,14 +135,14 @@ async function main() {
   //   process.exit();
 }
 
-async function registerFunction(passContractId) {
+async function registerFunction(passContractId, userAddress) {
   let contractExecuteTx = new ContractExecuteTransaction()
     .setContractId(passContractId)
     .setGas(200000)
     .setFunction(
       "registerFunction",
       new ContractFunctionParameters().addAddress(
-        "0xa3a9d3a54630a1b8886f01038b2f9f5076025686"
+        userAddress
       )
     );
   let contractExecuteSubmit = await contractExecuteTx.execute(client);
@@ -217,7 +228,7 @@ async function storePassword(passContractId) {
 
 async function freezeAccount(passContractId) {
     // Your string data
-    let myString = "TestTest";
+    let myString = "123321asddsadkjfdkfjdkfj";
   
     // Truncate or pad the string to 32 bytes
     if (myString.length > 32) {
@@ -269,7 +280,7 @@ async function freezeAccount(passContractId) {
 		.setGas(200000)
 		.setFunction("getPassword",
         new ContractFunctionParameters()
-          .addString("111111"))
+          .addString("Test"))
 		.execute(client);
         let contractExecuteRx = await contractExecuteTx.getReceipt(client);
         let contractExecuteRec = await contractExecuteTx.getRecord(client);
