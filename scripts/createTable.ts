@@ -6,8 +6,9 @@ const client = new CoinGeckoClient({
   autoRetry: true,
 });
 
-let csvStringCost = "Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Cronos, Tron, Conflux\n"
-let csvStringTime = "Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Cronos, Tron, Conflux\n"
+let csvStringCost = "Functions, Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Tron, Conflux\n"
+let csvStringTime = "Functions, Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Tron, Conflux\n"
+let price;
 
 async function getPriceInUSD(crypto: string) {
   return (await client.simplePrice({vs_currencies: "usd", ids: crypto}))[crypto].usd
@@ -16,8 +17,18 @@ async function getPriceInUSD(crypto: string) {
 async function main() {
     // const list = await client.coinList({});
     // console.log(list);
-    let price = await getPriceInUSD("ethereum")
-    price = await getPriceInUSD("ethereum")
+    // price = await getPriceInUSD("ethereum")
+    // price = await getPriceInUSD("matic-network")
+    // price = await getPriceInUSD("celo")
+    // price = await getPriceInUSD("avalanche-2")
+    // price = await getPriceInUSD("hedera-hashgraph")
+    // price = await getPriceInUSD("binancecoin")
+    // price = await getPriceInUSD("arbitrum")
+    // price = await getPriceInUSD("optimism")
+    // price = await getPriceInUSD("fantom")
+    // price = await getPriceInUSD("tron")
+    price = await getPriceInUSD("conflux-token")
+
     console.log({price});
     
 }
