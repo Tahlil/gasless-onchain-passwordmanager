@@ -26,6 +26,9 @@ dependencies:
   canvas:
     specifier: ^2.11.2
     version: 2.11.2
+  coingecko-api-v3:
+    specifier: ^0.0.29
+    version: 0.0.29
   dotenv:
     specifier: ^16.0.1
     version: 16.3.1
@@ -2920,6 +2923,12 @@ packages:
       mimic-response: 1.0.1
     dev: true
 
+  /coingecko-api-v3@0.0.29:
+    resolution: {integrity: sha512-4aF0mU6Pwmo78W4NsPbMslU3ooeSa2Dq8a8PFR+5+wWcWvTBMiUZgfy9UvybynYVsnvYCoyxtNwxTiMZBeZh4w==}
+    dependencies:
+      https: 1.0.0
+    dev: false
+
   /color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
     dependencies:
@@ -4803,6 +4812,10 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
+
+  /https@1.0.0:
+    resolution: {integrity: sha512-4EC57ddXrkaF0x83Oj8sM6SLQHAWXw90Skqu2M4AEWENZ3F02dFJE/GARA8igO79tcgYqGrD7ae4f5L3um2lgg==}
+    dev: false
 
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
