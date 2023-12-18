@@ -6,10 +6,14 @@ const client = new CoinGeckoClient({
   autoRetry: true,
 });
 
+async function getPriceInUSD(crypto: string) {
+  return (await client.simplePrice({vs_currencies: "usd", ids: crypto}))[crypto].usd
+}
+
 async function main() {
     // const list = await client.coinList({});
     // console.log(list);
-    const price = (await client.simplePrice({vs_currencies: "usd", ids: "ethereum"})).ethereum.usd
+    let price = await getPriceInUSD("ethereum")
     console.log({price});
     
 }
