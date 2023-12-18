@@ -5,14 +5,14 @@ import fs from 'fs';
 import path from 'path';
 import { Contract } from "ethers";
 
-const arbitrumPassDataPath = path.join(__dirname, "../", "results", "arbitrumPass2.json");
+const arbitrumPassDataPath = path.join(__dirname, "../", "results", "arbitrumPass3.json");
 
 async function main() {
 
     let finalValue = []
     let startTime, endTime, transactionFee, gasPrice: any;
 
-    for(let i = 1; i <= 5; i++){
+    for(let i = 1; i <= 2; i++){
 
         let obj: any = {}
 
