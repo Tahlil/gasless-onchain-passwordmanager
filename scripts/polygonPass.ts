@@ -5,14 +5,14 @@ import fs from 'fs';
 import path from 'path';
 import { Contract } from "ethers";
 
-const polygonPassDataPath = path.join(__dirname, "../", "results", "polygonPass2.json");
+const polygonPassDataPath = path.join(__dirname, "../", "results", "polygonPass3.json");
 
 async function main() {
 
     let finalValue = []
     let startTime, endTime, transactionFee, gasPrice: any;
 
-    for(let i = 1; i <= 3; i++){
+    for(let i = 1; i <= 5; i++){
 
         let obj: any = {}
 
