@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { Contract } from "ethers";
 
-const binancePassDataPath = path.join(__dirname, "../", "results", "binancePass2.json");
+const binancePassDataPath = path.join(__dirname, "../", "results", "binancePass3.json");
 
 async function main() {
 
