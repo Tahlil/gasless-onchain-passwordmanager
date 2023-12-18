@@ -9,7 +9,7 @@ import path from 'path';
 import dotenv from "dotenv";
 dotenv.config();
 
-const confluxPassDataPath = path.join(__dirname, "../", "results", "confluxPass.json");
+const confluxPassDataPath = path.join(__dirname, "../", "results", "confluxPass2.json");
 
 
 // Initialize constant variable
