@@ -118,7 +118,7 @@ async function main() {
   let avgsGas = [avgGas1, avgGas2, avgGas3];
   let avgsTime = [avgTime1, avgTime2, avgTime3];
   let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
-  // console.log(ethereumGasAvges, ethereumTimeAvges);
+  console.log(ethereumGasAvges, ethereumTimeAvges);
 }
 
 main().catch((error) => {
