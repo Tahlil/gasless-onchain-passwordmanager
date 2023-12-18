@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { Contract } from "ethers";
 
-const ethereumPassDataPath = path.join(__dirname, "../", "results", "ethereumPass2.json");
+const ethereumPassDataPath = path.join(__dirname, "../", "results", "ethereumPass3.json");
 
 async function main() {
 
