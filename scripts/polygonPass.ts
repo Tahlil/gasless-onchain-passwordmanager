@@ -3,8 +3,9 @@ import { Pass } from "../frontend/typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import fs from 'fs';
 import path from 'path';
+import { Contract } from "ethers";
 
-const polygonPassDataPath = path.join(__dirname, "../", "results", "polygonPass.json");
+const polygonPassDataPath = path.join(__dirname, "../", "results", "polygonPass2.json");
 
 async function main() {
 
@@ -137,14 +138,14 @@ async function main() {
 
 }
 
-async function registerFunction(pass: Pass, addressToCheck: SignerWithAddress) {
+async function registerFunction(pass: Contract, addressToCheck: SignerWithAddress) {
     const tx = await pass.registerFunction(addressToCheck.address);
     const txReceipt = await tx.wait();
 
     return txReceipt;
 }
 
-async function registerPlatform(pass: Pass, platform: string) {
+async function registerPlatform(pass: Contract, platform: string) {
     const tx = await pass.registerPlatform(platform);
     const txReceipt = await tx.wait();
 
@@ -170,7 +171,7 @@ async function signMessage(signer: { signMessage: (arg0: Uint8Array) => any; }, 
     return { messageHashBytes, v, r, s };
 }
 
-async function storePassword(pass: Pass, addressToCheck: SignerWithAddress, platform: string, encryptedPassword: string){
+async function storePassword(pass: Contract, addressToCheck: SignerWithAddress, platform: string, encryptedPassword: string){
 
     const { messageHashBytes, v, r, s } = await signMessage(addressToCheck, "123321asddsa");
 
@@ -182,13 +183,13 @@ async function storePassword(pass: Pass, addressToCheck: SignerWithAddress, plat
 
 }
 
-async function getPassword(pass: Pass, platform: string) {
+async function getPassword(pass: Contract, platform: string) {
     const encryptedPassword = await pass.getPassword(platform);
 
     return encryptedPassword
 }
 
-async function freezeAccount(pass: Pass, addressToCheck: SignerWithAddress, backupAddress: SignerWithAddress){
+async function freezeAccount(pass: Contract, addressToCheck: SignerWithAddress, backupAddress: SignerWithAddress){
 
     const { messageHashBytes, v, r, s } = await signMessage(addressToCheck, "123321asddsadkjfdkfjdkfj");
 
