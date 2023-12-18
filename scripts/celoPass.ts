@@ -9,7 +9,7 @@ const celoPassDataPath = path.join(
   __dirname,
   "../",
   "results",
-  "celoPass2.json"
+  "celoPass3.json"
 );
 
 async function main() {
