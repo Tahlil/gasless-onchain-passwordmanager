@@ -6,7 +6,7 @@ const hederaPassDataPath = path.join(
   __dirname,
   "../",
   "results",
-  "hederaPassUSD2.json"
+  "hederaPassUSD3.json"
 );
 
 require("dotenv").config({ path: path.resolve(__dirname, "..", ".env") });
