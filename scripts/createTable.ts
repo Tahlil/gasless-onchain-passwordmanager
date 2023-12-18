@@ -11,17 +11,15 @@ let csvStringCost =
 let csvStringTime =
   "Functions, Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Tron, Conflux\n";
 
-
 async function getPriceInUSD(crypto: string) {
   console.log("Calling price");
-  
+
   return (await client.simplePrice({ vs_currencies: "usd", ids: crypto }))[
     crypto
   ].usd;
 }
 
 function getPerfs(fileName: string, price: number, decimal: number) {
-  
   const contractDetailsDataPath = path.join(
     __dirname,
     "../",
@@ -29,27 +27,27 @@ function getPerfs(fileName: string, price: number, decimal: number) {
     fileName
   );
 
-
   const jsonData = JSON.parse(fs.readFileSync(contractDetailsDataPath, "utf8"));
-  let avgGas:any={
-    "registerFunction": 0.0,
-    "registerPlatform": 0.0,
-    "storePassword": 0.0,
-    "getPassword": 0.0,
-    "freezeAccount": 0.0,
-  }
-  , avgTime:any ={
-    "registerFunction": 0.0,
-    "registerPlatform": 0.0,
-    "storePassword": 0.0,
-    "getPassword": 0.0,
-    "freezeAccount": 0.0,
-  };
+  let avgGas: any = {
+      registerFunction: 0.0,
+      registerPlatform: 0.0,
+      storePassword: 0.0,
+      getPassword: 0.0,
+      freezeAccount: 0.0,
+    },
+    avgTime: any = {
+      registerFunction: 0.0,
+      registerPlatform: 0.0,
+      storePassword: 0.0,
+      getPassword: 0.0,
+      freezeAccount: 0.0,
+    };
   for (const data of jsonData) {
     for (const val in data) {
       for (const det in data[val]) {
         const splitted = data[val][det].split("/");
-        let gas = parseFloat(splitted[0]), time = parseFloat(splitted[1].split("ms")[0]);
+        let gas = parseFloat(splitted[0]),
+          time = parseFloat(splitted[1].split("ms")[0]);
         avgGas[val] += gas;
         avgTime[val] += time;
       }
@@ -58,13 +56,47 @@ function getPerfs(fileName: string, price: number, decimal: number) {
 
   for (let key in avgTime) {
     if (avgTime.hasOwnProperty(key)) {
-        avgTime[key] /= 5 ;
-        avgGas[key] /= (5 * 10**decimal);
-        avgGas[key] *= price;
+      avgTime[key] /= 5;
+      avgGas[key] /= 5 * 10 ** decimal;
+      avgGas[key] *= price;
     }
+  }
+
+  return [avgGas, avgTime];
 }
-  
-  return [avgGas, avgTime]
+
+function getAverageOfAvges(gasAvges: any, timeAvges: any) {
+  let avgGas: any = {
+      registerFunction: 0.0,
+      registerPlatform: 0.0,
+      storePassword: 0.0,
+      getPassword: 0.0,
+      freezeAccount: 0.0,
+    },
+    avgTime: any = {
+      registerFunction: 0.0,
+      registerPlatform: 0.0,
+      storePassword: 0.0,
+      getPassword: 0.0,
+      freezeAccount: 0.0,
+    };
+  for (const data of gasAvges) {
+    for (const val in data) {
+      avgGas[val] += data[val];
+    }
+  }
+  for (const data of timeAvges) {
+    for (const val in data) {
+      avgTime[val] += data[val];
+    }
+  }
+  for (let key in avgTime) {
+    if (avgTime.hasOwnProperty(key)) {
+      avgTime[key] /= 3;
+      avgGas[key] /= 3;
+    }
+  }
+  return [avgGas, avgTime];
 }
 
 async function main() {
@@ -79,11 +111,14 @@ async function main() {
   // const fantomfantomPrice = await getPriceInUSD("fantom");
   // const tronPrice = await getPriceInUSD("tron");
   // const confluxPrice = await getPriceInUSD("conflux-token");
-  const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18)
-  const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18)
-  const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18)
-  console.log({avgGas1, avgTime1});
-  
+
+  const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
+  const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
+  const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
+  let avgsGas = [avgGas1, avgGas2, avgGas3];
+  let avgsTime = [avgTime1, avgTime2, avgTime3];
+  let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
+  // console.log(ethereumGasAvges, ethereumTimeAvges);
 }
 
 main().catch((error) => {
