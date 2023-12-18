@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { Contract } from "ethers";
 
-const avalanchePassDataPath = path.join(__dirname, "../", "results", "avalanchePass2.json");
+const avalanchePassDataPath = path.join(__dirname, "../", "results", "avalanchePass3.json");
 
 async function main() {
 
