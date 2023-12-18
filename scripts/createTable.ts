@@ -6,6 +6,9 @@ const client = new CoinGeckoClient({
   autoRetry: true,
 });
 
+let csvStringCost = "Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Cronos, Tron, Conflux\n"
+let csvStringTime = "Ethereum, Polygon, Celo, Avalanche, Hedera Hashgraph, Binance smart chain, Arbitrum, Optimism, Fantom, Cronos, Tron, Conflux\n"
+
 async function getPriceInUSD(crypto: string) {
   return (await client.simplePrice({vs_currencies: "usd", ids: crypto}))[crypto].usd
 }
@@ -14,6 +17,7 @@ async function main() {
     // const list = await client.coinList({});
     // console.log(list);
     let price = await getPriceInUSD("ethereum")
+    price = await getPriceInUSD("ethereum")
     console.log({price});
     
 }
