@@ -106,21 +106,44 @@ function getAverageOfAvges(fileName: string, price: number) {
 
 async function main() {
   const ethereumPrice = await getPriceInUSD("ethereum");
-  // const maticPrice = await getPriceInUSD("matic-network");
-  // const celoPrice = await getPriceInUSD("celo");
-  // const avalanchePrice = await getPriceInUSD("avalanche-2");
-  // const hederaPrice = await getPriceInUSD("hedera-hashgraph");
-  // const binancecoinPrice = await getPriceInUSD("binancecoin");
-  // const arbitrumPrice = await getPriceInUSD("arbitrum");
-  // const optimismPrice = await getPriceInUSD("optimism");
-  // const fantomfantomPrice = await getPriceInUSD("fantom");
-  // const tronPrice = await getPriceInUSD("tron");
-  // const confluxPrice = await getPriceInUSD("conflux-token");
+  const maticPrice = await getPriceInUSD("matic-network");
+  const celoPrice = await getPriceInUSD("celo");
+  const avalanchePrice = await getPriceInUSD("avalanche-2");
+  const hederaPrice = await getPriceInUSD("hedera-hashgraph");
+  const binancecoinPrice = await getPriceInUSD("binancecoin");
+  const arbitrumPrice = await getPriceInUSD("arbitrum");
+  const optimismPrice = await getPriceInUSD("optimism");
+  const fantomPrice = await getPriceInUSD("fantom");
+  const tronPrice = await getPriceInUSD("tron");
+  const confluxPrice = await getPriceInUSD("conflux-token");
 
 
   let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges("ethereumPass", ethereumPrice);
+  let [maticGasAvges, maticTimeAvges] = getAverageOfAvges("polygonPass", maticPrice);
+  let [celoGasAvges, celoTimeAvges] = getAverageOfAvges("celoPass", celoPrice);
+  let [avalancheGasAvges, avalancheTimeAvges] = getAverageOfAvges("avalanchePass", avalanchePrice);
+  let [hederaGasAvges, hederaTimeAvges] = getAverageOfAvges("hederaPass", 1);
+  let [binanceGasAvges, binanceTimeAvges] = getAverageOfAvges("binancePass", binancecoinPrice);
+  let [arbitrumGasAvges, arbitrumTimeAvges] = getAverageOfAvges("arbitrumPass", arbitrumPrice);
+  let [optimismGasAvges, optimismTimeAvges] = getAverageOfAvges("optimismPass", optimismPrice);
+  let [fantomGasAvges, fantomTimeAvges] = getAverageOfAvges("fantomPass", fantomPrice);
+  let [tronGasAvges, tronTimeAvges] = getPerfs("tronPass", tronPrice, 0);
+  let [confluxGasAvges, confluxTimeAvges] = getAverageOfAvges("confluxPass", confluxPrice);
   console.log(ethereumGasAvges, ethereumTimeAvges);
+
+  csvStringCost += (["registerFunction", ethereumGasAvges.registerFunction, maticGasAvges.registerFunction, celoGasAvges.registerFunction, avalancheGasAvges.registerFunction, hederaGasAvges.registerFunction, binanceGasAvges.registerFunction, arbitrumGasAvges.registerFunction, optimismGasAvges.registerFunction, fantomGasAvges.registerFunction, tronGasAvges.registerFunction, confluxGasAvges.registerFunction ].join(",") + "\n" +
+
+  ["registerPlatform", ethereumGasAvges.registerPlatform, maticGasAvges.registerPlatform, celoGasAvges.registerPlatform, avalancheGasAvges.registerPlatform, hederaGasAvges.registerPlatform, binanceGasAvges.registerPlatform, arbitrumGasAvges.registerPlatform, optimismGasAvges.registerPlatform, fantomGasAvges.registerPlatform, tronGasAvges.registerPlatform, confluxGasAvges.registerPlatform ].join(",") + "\n" +
+
+  ["storePassword", ethereumGasAvges.storePassword, maticGasAvges.storePassword, celoGasAvges.storePassword, avalancheGasAvges.storePassword, hederaGasAvges.storePassword, binanceGasAvges.storePassword, arbitrumGasAvges.storePassword, optimismGasAvges.storePassword, fantomGasAvges.storePassword, tronGasAvges.storePassword, confluxGasAvges.storePassword ].join(",") + "\n" +
+
+  ["getPassword", ethereumGasAvges.getPassword, maticGasAvges.getPassword, celoGasAvges.getPassword, avalancheGasAvges.getPassword, hederaGasAvges.getPassword, binanceGasAvges.getPassword, arbitrumGasAvges.getPassword, optimismGasAvges.getPassword, fantomGasAvges.getPassword, tronGasAvges.getPassword, confluxGasAvges.getPassword ].join(",") + "\n" +
   
+  ["freezeAccount", ethereumGasAvges.freezeAccount, maticGasAvges.freezeAccount, celoGasAvges.freezeAccount, avalancheGasAvges.freezeAccount, hederaGasAvges.freezeAccount, binanceGasAvges.freezeAccount, arbitrumGasAvges.freezeAccount, optimismGasAvges.freezeAccount, fantomGasAvges.freezeAccount, tronGasAvges.freezeAccount, confluxGasAvges.freezeAccount ].join(",") + "\n"
+  ) 
+
+  
+
 //   const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
 //   const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
 //   const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
