@@ -65,10 +65,26 @@ function getPerfs(fileName: string, price: number, decimal: number) {
   return [avgGas, avgTime];
 }
 
+async function writeCSVToFile(
+  csvData: string,
+  filePath: string
+): Promise<void> {
+  try {
+    await fs.promises.writeFile(filePath, csvData);
+    console.log(`CSV data has been written to ${filePath}`);
+  } catch (error) {
+    console.error("Error writing CSV file:", error);
+  }
+}
+
 function getAverageOfAvges(fileName: string, price: number) {
-  const [avgGas1, avgTime1] = getPerfs(fileName+".json", price, 18);
-  const [avgGas2, avgTime2] = getPerfs(fileName+"2.json", price, 18);
-  const [avgGas3, avgTime3] = getPerfs(fileName+"3.json", price, 18);
+  let decimal = 18;
+  if (fileName.startsWith("hedera")) {
+    decimal = 0
+  }
+  const [avgGas1, avgTime1] = getPerfs(fileName + ".json", price, decimal);
+  const [avgGas2, avgTime2] = getPerfs(fileName + "2.json", price, decimal);
+  const [avgGas3, avgTime3] = getPerfs(fileName + "3.json", price, decimal);
   let gasAvges = [avgGas1, avgGas2, avgGas3];
   let timeAvges = [avgTime1, avgTime2, avgTime3];
   let avgGas: any = {
@@ -109,7 +125,7 @@ async function main() {
   const maticPrice = await getPriceInUSD("matic-network");
   const celoPrice = await getPriceInUSD("celo");
   const avalanchePrice = await getPriceInUSD("avalanche-2");
-  const hederaPrice = await getPriceInUSD("hedera-hashgraph");
+  // const hederaPrice = await getPriceInUSD("hedera-hashgraph");
   const binancecoinPrice = await getPriceInUSD("binancecoin");
   const arbitrumPrice = await getPriceInUSD("arbitrum");
   const optimismPrice = await getPriceInUSD("optimism");
@@ -117,52 +133,215 @@ async function main() {
   const tronPrice = await getPriceInUSD("tron");
   const confluxPrice = await getPriceInUSD("conflux-token");
 
-
-  let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges("ethereumPass", ethereumPrice);
-  let [maticGasAvges, maticTimeAvges] = getAverageOfAvges("polygonPass", maticPrice);
+  let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(
+    "ethereumPass",
+    ethereumPrice
+  );
+  let [maticGasAvges, maticTimeAvges] = getAverageOfAvges(
+    "polygonPass",
+    maticPrice
+  );
   let [celoGasAvges, celoTimeAvges] = getAverageOfAvges("celoPass", celoPrice);
-  let [avalancheGasAvges, avalancheTimeAvges] = getAverageOfAvges("avalanchePass", avalanchePrice);
+  let [avalancheGasAvges, avalancheTimeAvges] = getAverageOfAvges(
+    "avalanchePass",
+    avalanchePrice
+  );
   let [hederaGasAvges, hederaTimeAvges] = getAverageOfAvges("hederaPass", 1);
-  let [binanceGasAvges, binanceTimeAvges] = getAverageOfAvges("binancePass", binancecoinPrice);
-  let [arbitrumGasAvges, arbitrumTimeAvges] = getAverageOfAvges("arbitrumPass", arbitrumPrice);
-  let [optimismGasAvges, optimismTimeAvges] = getAverageOfAvges("optimismPass", optimismPrice);
-  let [fantomGasAvges, fantomTimeAvges] = getAverageOfAvges("fantomPass", fantomPrice);
-  let [tronGasAvges, tronTimeAvges] = getPerfs("tronPass", tronPrice, 0);
-  let [confluxGasAvges, confluxTimeAvges] = getAverageOfAvges("confluxPass", confluxPrice);
+  let [binanceGasAvges, binanceTimeAvges] = getAverageOfAvges(
+    "binancePass",
+    binancecoinPrice
+  );
+  let [arbitrumGasAvges, arbitrumTimeAvges] = getAverageOfAvges(
+    "arbitrumPass",
+    arbitrumPrice
+  );
+  let [optimismGasAvges, optimismTimeAvges] = getAverageOfAvges(
+    "optimismPass",
+    optimismPrice
+  );
+  let [fantomGasAvges, fantomTimeAvges] = getAverageOfAvges(
+    "fantomPass",
+    fantomPrice
+  );
+  let [tronGasAvges, tronTimeAvges] = getPerfs("tronPass.json", tronPrice, 0);
+  let [confluxGasAvges, confluxTimeAvges] = getAverageOfAvges(
+    "confluxPass",
+    confluxPrice
+  );
   console.log(ethereumGasAvges, ethereumTimeAvges);
 
-  csvStringCost += (["registerFunction", ethereumGasAvges.registerFunction, maticGasAvges.registerFunction, celoGasAvges.registerFunction, avalancheGasAvges.registerFunction, hederaGasAvges.registerFunction, binanceGasAvges.registerFunction, arbitrumGasAvges.registerFunction, optimismGasAvges.registerFunction, fantomGasAvges.registerFunction, tronGasAvges.registerFunction, confluxGasAvges.registerFunction ].join(",") + "\n" +
-
-  ["registerPlatform", ethereumGasAvges.registerPlatform, maticGasAvges.registerPlatform, celoGasAvges.registerPlatform, avalancheGasAvges.registerPlatform, hederaGasAvges.registerPlatform, binanceGasAvges.registerPlatform, arbitrumGasAvges.registerPlatform, optimismGasAvges.registerPlatform, fantomGasAvges.registerPlatform, tronGasAvges.registerPlatform, confluxGasAvges.registerPlatform ].join(",") + "\n" +
-
-  ["storePassword", ethereumGasAvges.storePassword, maticGasAvges.storePassword, celoGasAvges.storePassword, avalancheGasAvges.storePassword, hederaGasAvges.storePassword, binanceGasAvges.storePassword, arbitrumGasAvges.storePassword, optimismGasAvges.storePassword, fantomGasAvges.storePassword, tronGasAvges.storePassword, confluxGasAvges.storePassword ].join(",") + "\n" +
-
-  ["getPassword", ethereumGasAvges.getPassword, maticGasAvges.getPassword, celoGasAvges.getPassword, avalancheGasAvges.getPassword, hederaGasAvges.getPassword, binanceGasAvges.getPassword, arbitrumGasAvges.getPassword, optimismGasAvges.getPassword, fantomGasAvges.getPassword, tronGasAvges.getPassword, confluxGasAvges.getPassword ].join(",") + "\n" +
-  
-  ["freezeAccount", ethereumGasAvges.freezeAccount, maticGasAvges.freezeAccount, celoGasAvges.freezeAccount, avalancheGasAvges.freezeAccount, hederaGasAvges.freezeAccount, binanceGasAvges.freezeAccount, arbitrumGasAvges.freezeAccount, optimismGasAvges.freezeAccount, fantomGasAvges.freezeAccount, tronGasAvges.freezeAccount, confluxGasAvges.freezeAccount ].join(",") + "\n"
-  ) 
-
+  csvStringCost +=
+    [
+      "registerFunction",
+      ethereumGasAvges.registerFunction,
+      maticGasAvges.registerFunction,
+      celoGasAvges.registerFunction,
+      avalancheGasAvges.registerFunction,
+      hederaGasAvges.registerFunction,
+      binanceGasAvges.registerFunction,
+      arbitrumGasAvges.registerFunction,
+      optimismGasAvges.registerFunction,
+      fantomGasAvges.registerFunction,
+      tronGasAvges.registerFunction,
+      confluxGasAvges.registerFunction,
+    ].join(",") +
+    "\n" +
+    [
+      "registerPlatform",
+      ethereumGasAvges.registerPlatform,
+      maticGasAvges.registerPlatform,
+      celoGasAvges.registerPlatform,
+      avalancheGasAvges.registerPlatform,
+      hederaGasAvges.registerPlatform,
+      binanceGasAvges.registerPlatform,
+      arbitrumGasAvges.registerPlatform,
+      optimismGasAvges.registerPlatform,
+      fantomGasAvges.registerPlatform,
+      tronGasAvges.registerPlatform,
+      confluxGasAvges.registerPlatform,
+    ].join(",") +
+    "\n" +
+    [
+      "storePassword",
+      ethereumGasAvges.storePassword,
+      maticGasAvges.storePassword,
+      celoGasAvges.storePassword,
+      avalancheGasAvges.storePassword,
+      hederaGasAvges.storePassword,
+      binanceGasAvges.storePassword,
+      arbitrumGasAvges.storePassword,
+      optimismGasAvges.storePassword,
+      fantomGasAvges.storePassword,
+      tronGasAvges.storePassword,
+      confluxGasAvges.storePassword,
+    ].join(",") +
+    "\n" +
+    [
+      "getPassword",
+      ethereumGasAvges.getPassword,
+      maticGasAvges.getPassword,
+      celoGasAvges.getPassword,
+      avalancheGasAvges.getPassword,
+      hederaGasAvges.getPassword,
+      binanceGasAvges.getPassword,
+      arbitrumGasAvges.getPassword,
+      optimismGasAvges.getPassword,
+      fantomGasAvges.getPassword,
+      tronGasAvges.getPassword,
+      confluxGasAvges.getPassword,
+    ].join(",") +
+    "\n" +
+    [
+      "freezeAccount",
+      ethereumGasAvges.freezeAccount,
+      maticGasAvges.freezeAccount,
+      celoGasAvges.freezeAccount,
+      avalancheGasAvges.freezeAccount,
+      hederaGasAvges.freezeAccount,
+      binanceGasAvges.freezeAccount,
+      arbitrumGasAvges.freezeAccount,
+      optimismGasAvges.freezeAccount,
+      fantomGasAvges.freezeAccount,
+      tronGasAvges.freezeAccount,
+      confluxGasAvges.freezeAccount,
+    ].join(",") +
+    "\n";
 
   // Time in MS
-  csvStringTime += (["registerFunction", ethereumTimeAvges.registerFunction, maticTimeAvges.registerFunction, celoTimeAvges.registerFunction, avalancheTimeAvges.registerFunction, hederaTimeAvges.registerFunction, binanceTimeAvges.registerFunction, arbitrumTimeAvges.registerFunction, optimismTimeAvges.registerFunction, fantomTimeAvges.registerFunction, tronTimeAvges.registerFunction, confluxTimeAvges.registerFunction ].join(",") + "\n" +
+  csvStringTime +=
+    [
+      "registerFunction",
+      ethereumTimeAvges.registerFunction,
+      maticTimeAvges.registerFunction,
+      celoTimeAvges.registerFunction,
+      avalancheTimeAvges.registerFunction,
+      hederaTimeAvges.registerFunction,
+      binanceTimeAvges.registerFunction,
+      arbitrumTimeAvges.registerFunction,
+      optimismTimeAvges.registerFunction,
+      fantomTimeAvges.registerFunction,
+      tronTimeAvges.registerFunction,
+      confluxTimeAvges.registerFunction,
+    ].join(",") +
+    "\n" +
+    [
+      "registerPlatform",
+      ethereumTimeAvges.registerPlatform,
+      maticTimeAvges.registerPlatform,
+      celoTimeAvges.registerPlatform,
+      avalancheTimeAvges.registerPlatform,
+      hederaTimeAvges.registerPlatform,
+      binanceTimeAvges.registerPlatform,
+      arbitrumTimeAvges.registerPlatform,
+      optimismTimeAvges.registerPlatform,
+      fantomTimeAvges.registerPlatform,
+      tronTimeAvges.registerPlatform,
+      confluxTimeAvges.registerPlatform,
+    ].join(",") +
+    "\n" +
+    [
+      "storePassword",
+      ethereumTimeAvges.storePassword,
+      maticTimeAvges.storePassword,
+      celoTimeAvges.storePassword,
+      avalancheTimeAvges.storePassword,
+      hederaTimeAvges.storePassword,
+      binanceTimeAvges.storePassword,
+      arbitrumTimeAvges.storePassword,
+      optimismTimeAvges.storePassword,
+      fantomTimeAvges.storePassword,
+      tronTimeAvges.storePassword,
+      confluxTimeAvges.storePassword,
+    ].join(",") +
+    "\n" +
+    [
+      "getPassword",
+      ethereumTimeAvges.getPassword,
+      maticTimeAvges.getPassword,
+      celoTimeAvges.getPassword,
+      avalancheTimeAvges.getPassword,
+      hederaTimeAvges.getPassword,
+      binanceTimeAvges.getPassword,
+      arbitrumTimeAvges.getPassword,
+      optimismTimeAvges.getPassword,
+      fantomTimeAvges.getPassword,
+      tronTimeAvges.getPassword,
+      confluxTimeAvges.getPassword,
+    ].join(",") +
+    "\n" +
+    [
+      "freezeAccount",
+      ethereumTimeAvges.freezeAccount,
+      maticTimeAvges.freezeAccount,
+      celoTimeAvges.freezeAccount,
+      avalancheTimeAvges.freezeAccount,
+      hederaTimeAvges.freezeAccount,
+      binanceTimeAvges.freezeAccount,
+      arbitrumTimeAvges.freezeAccount,
+      optimismTimeAvges.freezeAccount,
+      fantomTimeAvges.freezeAccount,
+      tronTimeAvges.freezeAccount,
+      confluxTimeAvges.freezeAccount,
+    ].join(",") +
+    "\n";
 
-  ["registerPlatform", ethereumTimeAvges.registerPlatform, maticTimeAvges.registerPlatform, celoTimeAvges.registerPlatform, avalancheTimeAvges.registerPlatform, hederaTimeAvges.registerPlatform, binanceTimeAvges.registerPlatform, arbitrumTimeAvges.registerPlatform, optimismTimeAvges.registerPlatform, fantomTimeAvges.registerPlatform, tronTimeAvges.registerPlatform, confluxTimeAvges.registerPlatform ].join(",") + "\n" +
+  writeCSVToFile(
+    csvStringCost,
+    path.join(__dirname, "../", "results", "gasCost.csv")
+  );
 
-  ["storePassword", ethereumTimeAvges.storePassword, maticTimeAvges.storePassword, celoTimeAvges.storePassword, avalancheTimeAvges.storePassword, hederaTimeAvges.storePassword, binanceTimeAvges.storePassword, arbitrumTimeAvges.storePassword, optimismTimeAvges.storePassword, fantomTimeAvges.storePassword, tronTimeAvges.storePassword, confluxTimeAvges.storePassword ].join(",") + "\n" +
+  writeCSVToFile(
+    csvStringTime,
+    path.join(__dirname, "../", "results", "timingMS.csv")
+  );
 
-  ["getPassword", ethereumTimeAvges.getPassword, maticTimeAvges.getPassword, celoTimeAvges.getPassword, avalancheTimeAvges.getPassword, hederaTimeAvges.getPassword, binanceTimeAvges.getPassword, arbitrumTimeAvges.getPassword, optimismTimeAvges.getPassword, fantomTimeAvges.getPassword, tronTimeAvges.getPassword, confluxTimeAvges.getPassword ].join(",") + "\n" +
-  
-  ["freezeAccount", ethereumTimeAvges.freezeAccount, maticTimeAvges.freezeAccount, celoTimeAvges.freezeAccount, avalancheTimeAvges.freezeAccount, hederaTimeAvges.freezeAccount, binanceTimeAvges.freezeAccount, arbitrumTimeAvges.freezeAccount, optimismTimeAvges.freezeAccount, fantomTimeAvges.freezeAccount, tronTimeAvges.freezeAccount, confluxTimeAvges.freezeAccount ].join(",") + "\n"
-  ) 
-
-
-//   const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
-//   const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
-//   const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
-//   let avgsGas = [avgGas1, avgGas2, avgGas3];
-//   let avgsTime = [avgTime1, avgTime2, avgTime3];
-//   let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
-//   console.log(ethereumGasAvges, ethereumTimeAvges);
+  //   const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
+  //   const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
+  //   const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
+  //   let avgsGas = [avgGas1, avgGas2, avgGas3];
+  //   let avgsTime = [avgTime1, avgTime2, avgTime3];
+  //   let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
+  //   console.log(ethereumGasAvges, ethereumTimeAvges);
 }
 
 main().catch((error) => {
