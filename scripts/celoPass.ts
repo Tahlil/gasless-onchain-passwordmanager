@@ -1,208 +1,268 @@
 import { ethers } from "hardhat";
 import { Pass } from "../frontend/typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import { Contract } from "ethers";
 
-const celoPassDataPath = path.join(__dirname, "../", "results", "celoPass.json");
+const celoPassDataPath = path.join(
+  __dirname,
+  "../",
+  "results",
+  "celoPass3.json"
+);
 
 async function main() {
+  let finalValue = [];
+  let startTime, endTime, transactionFee, gasPrice: any;
 
-    let finalValue = []
-    let startTime, endTime, transactionFee, gasPrice: any;
+  for (let i = 1; i <= 5; i++) {
+    let obj: any = {};
 
-    for(let i = 1; i <= 5; i++){
+    //Deploy Password Manager Contract
+    console.time("Password_Manager_Contract_Deploy_Timer");
+    const Pass = await ethers.getContractFactory("Pass");
+    const pass = await Pass.deploy();
+    await pass.deployed();
+    console.timeEnd("Password_Manager_Contract_Deploy_Timer");
 
-        let obj: any = {}
+    console.log("Password Manager contract deployed to: ", pass.address);
 
-        //Deploy Password Manager Contract
-        console.time("Password_Manager_Contract_Deploy_Timer");
-        const Pass = await ethers.getContractFactory("Pass");
-        const pass = await Pass.deploy();
-        await pass.deployed();
-        console.timeEnd("Password_Manager_Contract_Deploy_Timer");
+    let contractOwner: SignerWithAddress,
+      otherAccounts: SignerWithAddress[],
+      add1: SignerWithAddress;
+    [contractOwner, ...otherAccounts] = await ethers.getSigners();
 
-        console.log("Password Manager contract deployed to: ", pass.address);
+    // const userAddress = otherAccounts[2].address;
+    // const user = otherAccounts[2];
 
+    //const pass = await ethers.getContractAt("Pass", "0xE5eD41c94Fb35B28D71C4ea45a7974FBfbF70e91");
 
-        let contractOwner: SignerWithAddress, otherAccounts: SignerWithAddress[], add1: SignerWithAddress;
-        [contractOwner, ...otherAccounts] = await ethers.getSigners();
+    //RegisterFunction Transaction
+    obj["registerFunction"] = {};
+    let timestampRegisterFunction = Date.now();
+    console.log("Register Function Timestamp: ", timestampRegisterFunction);
 
-        // const userAddress = otherAccounts[2].address;
-        // const user = otherAccounts[2];
+    console.time("Register_Function_timer");
+    startTime = performance.now();
+    const txReceiptRegisterFunction = await registerFunction(
+      pass,
+      contractOwner
+    );
+    endTime = performance.now();
+    console.timeEnd("Register_Function_timer");
+    console.log(txReceiptRegisterFunction);
+    const gasUsedRegisterFunction = ethers.utils.formatUnits(
+      txReceiptRegisterFunction.gasUsed,
+      18
+    );
+    console.log("RegisterFunction used gas: ", gasUsedRegisterFunction);
 
-        //const pass = await ethers.getContractAt("Pass", "0xE5eD41c94Fb35B28D71C4ea45a7974FBfbF70e91");
+    gasPrice = txReceiptRegisterFunction.effectiveGasPrice;
 
-        //RegisterFunction Transaction
-        obj["registerFunction"] = {}
-        let timestampRegisterFunction = Date.now()
-        console.log("Register Function Timestamp: ",timestampRegisterFunction);
+    transactionFee = (txReceiptRegisterFunction.gasUsed as any) * gasPrice;
 
-        console.time("Register_Function_timer")
-        startTime = performance.now();
-        const txReceiptRegisterFunction = await registerFunction(pass, contractOwner);
-        endTime = performance.now();
-        console.timeEnd("Register_Function_timer")
-        console.log(txReceiptRegisterFunction)
-        const gasUsedRegisterFunction = ethers.utils.formatUnits(txReceiptRegisterFunction.gasUsed, 18);
-        console.log("RegisterFunction used gas: ", gasUsedRegisterFunction);
+    obj["registerFunction"][timestampRegisterFunction] = `${transactionFee}/${
+      endTime - startTime
+    }ms`;
 
-        gasPrice = txReceiptRegisterFunction.effectiveGasPrice
+    //RegisterPlatform Transaction
+    obj["registerPlatform"] = {};
+    let timestampRegisterPlatform = Date.now();
+    console.log("Register Platform Timestamp: ", timestampRegisterPlatform);
 
-        transactionFee = txReceiptRegisterFunction.gasUsed as any *  gasPrice;
+    console.time("Register_Platform_timer");
+    startTime = performance.now();
+    const txReceiptRegisterPlatform = await registerPlatform(pass, "Test");
+    endTime = performance.now();
+    console.timeEnd("Register_Platform_timer");
+    console.log(txReceiptRegisterPlatform);
+    const gasUsedRegisterPlatform = ethers.utils.formatUnits(
+      txReceiptRegisterPlatform.gasUsed,
+      18
+    );
+    console.log("RegisterPlatform used gas: ", gasUsedRegisterPlatform);
 
-        obj["registerFunction"][timestampRegisterFunction] = `${transactionFee}/${endTime-startTime}ms`
-        
+    gasPrice = txReceiptRegisterFunction.effectiveGasPrice;
 
-        //RegisterPlatform Transaction
-        obj["registerPlatform"] = {}
-        let timestampRegisterPlatform = Date.now()
-        console.log("Register Platform Timestamp: ",timestampRegisterPlatform);
+    transactionFee = (txReceiptRegisterFunction.gasUsed as any) * gasPrice;
 
-        console.time("Register_Platform_timer")
-        startTime = performance.now();
-        const txReceiptRegisterPlatform = await registerPlatform(pass, "Test");
-        endTime = performance.now();
-        console.timeEnd("Register_Platform_timer")
-        console.log(txReceiptRegisterPlatform);
-        const gasUsedRegisterPlatform = ethers.utils.formatUnits(txReceiptRegisterPlatform.gasUsed, 18);
-        console.log("RegisterPlatform used gas: ", gasUsedRegisterPlatform);
+    obj["registerPlatform"][timestampRegisterPlatform] = `${transactionFee}/${
+      endTime - startTime
+    }ms`;
 
-        gasPrice = txReceiptRegisterFunction.effectiveGasPrice
+    //Store Password Transaction
+    obj["storePassword"] = {};
+    let timestampStorePassword = Date.now();
+    console.log("Store Password Timestamp: ", timestampStorePassword);
 
-        transactionFee = txReceiptRegisterFunction.gasUsed as any *  gasPrice;
-        
-        obj["registerPlatform"][timestampRegisterPlatform] = `${transactionFee}/${endTime-startTime}ms`
+    console.time("Store_Password_timer");
+    startTime = performance.now();
+    const txReceiptStorePassword = await storePassword(
+      pass,
+      contractOwner,
+      "Test",
+      "fdh1fklsf"
+    );
+    endTime = performance.now();
+    console.timeEnd("Store_Password_timer");
+    console.log(txReceiptStorePassword);
+    const gasUsedStorePassword = ethers.utils.formatUnits(
+      txReceiptStorePassword.gasUsed,
+      18
+    );
+    console.log("Store Password used gas: ", gasUsedStorePassword);
 
-        //Store Password Transaction
-        obj["storePassword"] = {}
-        let timestampStorePassword = Date.now();
-        console.log("Store Password Timestamp: ",timestampStorePassword);
+    gasPrice = txReceiptStorePassword.effectiveGasPrice;
 
-        console.time("Store_Password_timer")
-        startTime = performance.now();
-        const txReceiptStorePassword = await storePassword(pass, contractOwner, "Test", "fdh1fklsf");
-        endTime = performance.now();
-        console.timeEnd("Store_Password_timer")
-        console.log(txReceiptStorePassword)
-        const gasUsedStorePassword = ethers.utils.formatUnits(txReceiptStorePassword.gasUsed, 18);
-        console.log("Store Password used gas: ", gasUsedStorePassword);
+    transactionFee = (txReceiptStorePassword.gasUsed as any) * gasPrice;
 
-        gasPrice = txReceiptStorePassword.effectiveGasPrice
+    obj["storePassword"][timestampStorePassword] = `${transactionFee}/${
+      endTime - startTime
+    }ms`;
 
-        transactionFee = txReceiptStorePassword.gasUsed as any *  gasPrice;
+    //Get Password
+    obj["getPassword"] = {};
+    let timestampGetPassword = Date.now();
+    console.log("Get Password Timestamp: ", timestampGetPassword);
 
-        obj["storePassword"][timestampStorePassword] = `${transactionFee}/${endTime-startTime}ms`
+    console.time("Get_Password_timer");
+    startTime = performance.now();
+    const encryptedPassword = await getPassword(pass, "Test");
+    endTime = performance.now();
+    console.timeEnd("Get_Password_timer");
+    console.log(encryptedPassword);
 
-        //Get Password
-        obj["getPassword"] = {}
-        let timestampGetPassword = Date.now();
-        console.log("Get Password Timestamp: ",timestampGetPassword);
+    obj["getPassword"][timestampGetPassword] = `0/${endTime - startTime}ms`;
 
-        console.time("Get_Password_timer")
-        startTime = performance.now()
-        const encryptedPassword = await getPassword(pass, "Test");
-        endTime = performance.now()
-        console.timeEnd("Get_Password_timer")
-        console.log(encryptedPassword)
+    //Freeze Account Transaction
+    obj["freezeAccount"] = {};
+    let timestampFreezeAccount = Date.now();
+    console.log("Freeze Account Timestamp: ", timestampFreezeAccount);
 
-        obj["getPassword"][timestampGetPassword] = `0/${endTime-startTime}ms`;
+    console.time("Freeze_Account_timer");
+    startTime = performance.now();
+    const txReceiptFreezeAccount = await freezeAccount(
+      pass,
+      contractOwner,
+      otherAccounts[0]
+    );
+    endTime = performance.now();
+    console.timeEnd("Freeze_Account_timer");
+    console.log(txReceiptFreezeAccount);
+    const gasUsedFreezeAccount = ethers.utils.formatUnits(
+      txReceiptFreezeAccount.gasUsed,
+      18
+    );
+    console.log("Freeze Account used gas: ", gasUsedFreezeAccount);
 
-        //Freeze Account Transaction
-        obj["freezeAccount"] = {}
-        let timestampFreezeAccount = Date.now()
-        console.log("Freeze Account Timestamp: ",timestampFreezeAccount);
+    gasPrice = txReceiptFreezeAccount.effectiveGasPrice;
 
-        console.time("Freeze_Account_timer");
-        startTime = performance.now()
-        const txReceiptFreezeAccount = await freezeAccount(pass, contractOwner, otherAccounts[0]);
-        endTime = performance.now()
-        console.timeEnd("Freeze_Account_timer");
-        console.log(txReceiptFreezeAccount)
-        const gasUsedFreezeAccount = ethers.utils.formatUnits(txReceiptFreezeAccount.gasUsed, 18);
-        console.log("Freeze Account used gas: ", gasUsedFreezeAccount);
+    transactionFee = (txReceiptFreezeAccount.gasUsed as any) * gasPrice;
 
-        gasPrice = txReceiptFreezeAccount.effectiveGasPrice
+    obj["freezeAccount"][timestampFreezeAccount] = `${transactionFee}/${
+      endTime - startTime
+    }ms`;
 
-        transactionFee = txReceiptFreezeAccount.gasUsed as any *  gasPrice;
+    finalValue.push(obj);
 
-        obj["freezeAccount"][timestampFreezeAccount] = `${transactionFee}/${endTime-startTime}ms`
-
-        finalValue.push(obj);
-
-        fs.writeFileSync(celoPassDataPath, JSON.stringify(finalValue));
-
-    }
-
-
+    fs.writeFileSync(celoPassDataPath, JSON.stringify(finalValue));
+  }
 }
 
-async function registerFunction(pass: Pass, addressToCheck: SignerWithAddress) {
-    const tx = await pass.registerFunction(addressToCheck.address);
-    const txReceipt = await tx.wait();
+async function registerFunction(pass: Contract, addressToCheck: SignerWithAddress) {
+  const tx = await pass.registerFunction(addressToCheck.address);
+  const txReceipt = await tx.wait();
 
-    return txReceipt;
+  return txReceipt;
 }
 
-async function registerPlatform(pass: Pass, platform: string) {
-    const tx = await pass.registerPlatform(platform);
-    const txReceipt = await tx.wait();
+async function registerPlatform(pass: Contract, platform: string) {
+  const tx = await pass.registerPlatform(platform);
+  const txReceipt = await tx.wait();
 
-    return txReceipt;
+  return txReceipt;
 }
 
-async function signMessage(signer: { signMessage: (arg0: Uint8Array) => any; }, message: string) {
-    let randomString = ethers.utils.id(message);
+async function signMessage(
+  signer: { signMessage: (arg0: Uint8Array) => any },
+  message: string
+) {
+  let randomString = ethers.utils.id(message);
 
-    let messageHashBytes = ethers.utils.arrayify(randomString);
+  let messageHashBytes = ethers.utils.arrayify(randomString);
 
-    // Sign the binary data
-    let flatSig = await signer.signMessage(messageHashBytes);
+  // Sign the binary data
+  let flatSig = await signer.signMessage(messageHashBytes);
 
-    // For Solidity, we need the expanded-format of a signature
-    let sig = ethers.utils.splitSignature(flatSig);
+  // For Solidity, we need the expanded-format of a signature
+  let sig = ethers.utils.splitSignature(flatSig);
 
-    // split signature
-    const v = sig.v;
-    const r = sig.r;
-    const s = sig.s;
+  // split signature
+  const v = sig.v;
+  const r = sig.r;
+  const s = sig.s;
 
-    return { messageHashBytes, v, r, s };
+  return { messageHashBytes, v, r, s };
 }
 
-async function storePassword(pass: Pass, addressToCheck: SignerWithAddress, platform: string, encryptedPassword: string){
+async function storePassword(
+  pass: Contract,
+  addressToCheck: SignerWithAddress,
+  platform: string,
+  encryptedPassword: string
+) {
+  const { messageHashBytes, v, r, s } = await signMessage(
+    addressToCheck,
+    "123321asddsa"
+  );
 
-    const { messageHashBytes, v, r, s } = await signMessage(addressToCheck, "123321asddsa");
+  const tx = await pass.storePassword(
+    platform,
+    encryptedPassword,
+    messageHashBytes,
+    v,
+    r,
+    s,
+    addressToCheck.address
+  );
+  const txReceipt = await tx.wait();
 
-    const tx = await pass.storePassword(platform, encryptedPassword, messageHashBytes,
-        v, r, s, addressToCheck.address);
-    const txReceipt = await tx.wait();
-
-    return txReceipt;
-
+  return txReceipt;
 }
 
-async function getPassword(pass: Pass, platform: string) {
-    const encryptedPassword = await pass.getPassword(platform);
+async function getPassword(pass: Contract, platform: string) {
+  const encryptedPassword = await pass.getPassword(platform);
 
-    return encryptedPassword
+  return encryptedPassword;
 }
 
-async function freezeAccount(pass: Pass, addressToCheck: SignerWithAddress, backupAddress: SignerWithAddress){
+async function freezeAccount(
+  pass: Contract,
+  addressToCheck: SignerWithAddress,
+  backupAddress: SignerWithAddress
+) {
+  const { messageHashBytes, v, r, s } = await signMessage(
+    addressToCheck,
+    "123321asddsadkjfdkfjdkfj"
+  );
 
-    const { messageHashBytes, v, r, s } = await signMessage(addressToCheck, "123321asddsadkjfdkfjdkfj");
+  const tx = await pass.freezeAccount(
+    addressToCheck.address,
+    backupAddress.address,
+    messageHashBytes,
+    v,
+    r,
+    s
+  );
+  const txReceipt = await tx.wait();
 
-    const tx = await pass.freezeAccount(addressToCheck.address, backupAddress.address, messageHashBytes,
-        v, r, s);
-    const txReceipt = await tx.wait();
-
-    return txReceipt;
+  return txReceipt;
 }
-
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  });
+  console.error(error);
+  process.exitCode = 1;
+});

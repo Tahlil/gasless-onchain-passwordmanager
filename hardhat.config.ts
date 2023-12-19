@@ -1,4 +1,4 @@
-import { HardhatUserConfig } from "hardhat/config";
+// import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-solhint";
 import '@typechain/hardhat'
@@ -60,7 +60,7 @@ const getRPCURL = (network: string, RPCNodeProvider: string) => {
 
 
 
-const config: HardhatUserConfig = {
+const config = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
