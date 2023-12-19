@@ -65,7 +65,12 @@ function getPerfs(fileName: string, price: number, decimal: number) {
   return [avgGas, avgTime];
 }
 
-function getAverageOfAvges(gasAvges: any, timeAvges: any) {
+function getAverageOfAvges(fileName: string, price: number) {
+  const [avgGas1, avgTime1] = getPerfs(fileName+".json", price, 18);
+  const [avgGas2, avgTime2] = getPerfs(fileName+"2.json", price, 18);
+  const [avgGas3, avgTime3] = getPerfs(fileName+"3.json", price, 18);
+  let gasAvges = [avgGas1, avgGas2, avgGas3];
+  let timeAvges = [avgTime1, avgTime2, avgTime3];
   let avgGas: any = {
       registerFunction: 0.0,
       registerPlatform: 0.0,
@@ -112,13 +117,17 @@ async function main() {
   // const tronPrice = await getPriceInUSD("tron");
   // const confluxPrice = await getPriceInUSD("conflux-token");
 
-  const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
-  const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
-  const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
-  let avgsGas = [avgGas1, avgGas2, avgGas3];
-  let avgsTime = [avgTime1, avgTime2, avgTime3];
-  let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
+
+  let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges("ethereumPass", ethereumPrice);
   console.log(ethereumGasAvges, ethereumTimeAvges);
+  
+//   const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
+//   const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
+//   const [avgGas3, avgTime3] = getPerfs("ethereumPass3.json", ethereumPrice, 18);
+//   let avgsGas = [avgGas1, avgGas2, avgGas3];
+//   let avgsTime = [avgTime1, avgTime2, avgTime3];
+//   let [ethereumGasAvges, ethereumTimeAvges] = getAverageOfAvges(avgsGas, avgsTime);
+//   console.log(ethereumGasAvges, ethereumTimeAvges);
 }
 
 main().catch((error) => {
