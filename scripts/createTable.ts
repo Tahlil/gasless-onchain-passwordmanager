@@ -142,7 +142,19 @@ async function main() {
   ["freezeAccount", ethereumGasAvges.freezeAccount, maticGasAvges.freezeAccount, celoGasAvges.freezeAccount, avalancheGasAvges.freezeAccount, hederaGasAvges.freezeAccount, binanceGasAvges.freezeAccount, arbitrumGasAvges.freezeAccount, optimismGasAvges.freezeAccount, fantomGasAvges.freezeAccount, tronGasAvges.freezeAccount, confluxGasAvges.freezeAccount ].join(",") + "\n"
   ) 
 
+
+  // Time in MS
+  csvStringTime += (["registerFunction", ethereumTimeAvges.registerFunction, maticTimeAvges.registerFunction, celoTimeAvges.registerFunction, avalancheTimeAvges.registerFunction, hederaTimeAvges.registerFunction, binanceTimeAvges.registerFunction, arbitrumTimeAvges.registerFunction, optimismTimeAvges.registerFunction, fantomTimeAvges.registerFunction, tronTimeAvges.registerFunction, confluxTimeAvges.registerFunction ].join(",") + "\n" +
+
+  ["registerPlatform", ethereumTimeAvges.registerPlatform, maticTimeAvges.registerPlatform, celoTimeAvges.registerPlatform, avalancheTimeAvges.registerPlatform, hederaTimeAvges.registerPlatform, binanceTimeAvges.registerPlatform, arbitrumTimeAvges.registerPlatform, optimismTimeAvges.registerPlatform, fantomTimeAvges.registerPlatform, tronTimeAvges.registerPlatform, confluxTimeAvges.registerPlatform ].join(",") + "\n" +
+
+  ["storePassword", ethereumTimeAvges.storePassword, maticTimeAvges.storePassword, celoTimeAvges.storePassword, avalancheTimeAvges.storePassword, hederaTimeAvges.storePassword, binanceTimeAvges.storePassword, arbitrumTimeAvges.storePassword, optimismTimeAvges.storePassword, fantomTimeAvges.storePassword, tronTimeAvges.storePassword, confluxTimeAvges.storePassword ].join(",") + "\n" +
+
+  ["getPassword", ethereumTimeAvges.getPassword, maticTimeAvges.getPassword, celoTimeAvges.getPassword, avalancheTimeAvges.getPassword, hederaTimeAvges.getPassword, binanceTimeAvges.getPassword, arbitrumTimeAvges.getPassword, optimismTimeAvges.getPassword, fantomTimeAvges.getPassword, tronTimeAvges.getPassword, confluxTimeAvges.getPassword ].join(",") + "\n" +
   
+  ["freezeAccount", ethereumTimeAvges.freezeAccount, maticTimeAvges.freezeAccount, celoTimeAvges.freezeAccount, avalancheTimeAvges.freezeAccount, hederaTimeAvges.freezeAccount, binanceTimeAvges.freezeAccount, arbitrumTimeAvges.freezeAccount, optimismTimeAvges.freezeAccount, fantomTimeAvges.freezeAccount, tronTimeAvges.freezeAccount, confluxTimeAvges.freezeAccount ].join(",") + "\n"
+  ) 
+
 
 //   const [avgGas1, avgTime1] = getPerfs("ethereumPass.json", ethereumPrice, 18);
 //   const [avgGas2, avgTime2] = getPerfs("ethereumPass2.json", ethereumPrice, 18);
